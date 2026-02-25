@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>天麗計算機-2026母親節特惠版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
+        
+        :root {
+            --name-size: 18px;
+            --two-thirds-size: 13px;
+            --money-size: 16px;
+            --money-sub-size: 10.6px;
+        }
+
+        .item-name { font-size: var(--name-size) !important; font-weight: 900; line-height: 1.2; color: #1e293b; }
+        .item-sub { font-size: var(--two-thirds-size) !important; font-weight: 700; } 
+        .item-alias { font-size: 12px !important; font-weight: 800; color: #059669; }
+        .label-font { font-size: 15px !important; font-weight: 600; letter-spacing: 0.05em; }
+        .money-font { font-size: var(--money-size) !important; font-weight: 900; color: #dc2626; }
+        .pv-font { font-size: var(--money-sub-size) !important; font-weight: 800; color: #f97316; }
+
+        @keyframes toast-in {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        .toast-animate { animation: toast-in 0.2s ease-out forwards; }
+        .promo-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; color: #e11d48; font-weight: 800; font-size: 11px; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans tracking-tight" style="padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+
+    <div class="max-w-2xl mx-auto p-3 text-left">
+        <header class="bg-white rounded-3xl shadow-sm p-5 mb-4 border border-slate-200 flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+                    <span class="text-orange-500">天麗生技</span>計算機
+                </h1>
+                <p class="text-slate-400 text-[14px] font-black tracking-[0.2em] mt-1 uppercase">TENLEAD BIOTECH</p>
+                <p class="text-orange-400 text-[12px] font-bold mt-0.5">published by 靜萱</p>
+                <div class="mt-3 space-y-1">
+                    <p class="text-rose-500 text-[14px] font-black flex items-center gap-1">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> 母親節特惠：3/7(六) - 3/18(三)
+                    </p>
+                    <div class="bg-rose-50 rounded-xl p-3 mt-2 border border-rose-100">
+                        <p class="text-rose-700 text-[12px] font-black mb-1">🎁【活動滿額贈】</p>
+                        <ul class="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] font-bold text-rose-600">
+                            <li><span class="text-black">1.9萬 PV：</span>2號</li>
+                            <li><span class="text-black">3.2萬 PV：</span>1+9號</li>
+                            <li><span class="text-black">5.0萬 PV：</span>6A+9+12號</li>
+                            <li><span class="text-black">10萬 PV：</span>2萬幣+隨行杯+保養包</li>
+                            <li class="col-span-2"><span class="text-black">20萬 PV：</span>5萬幣+隨行杯x2+保養包+C粉</li>
+                        </ul>
+                    </div>
+                    <div class="space-y-0.5">
+                        <p class="text-emerald-600 text-[13px] font-bold flex items-center gap-1">
+                            <i data-lucide="leaf" class="w-4 h-4"></i> 保健系列（限同品項）買 8 送 1
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <button type="button" onclick="resetAll()" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:text-red-500 border border-slate-100 active:scale-90 transition-all shadow-sm">
+                <i data-lucide="rotate-ccw" class="w-5 h-5 pointer-events-none"></i>
+            </button>
+        </header>
+
+        <div class="relative mb-4 sticky top-3 z-30">
+            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 pointer-events-none"></i>
+            <input type="text" id="searchInput" oninput="renderTable()" placeholder="搜尋產品名稱、編號..." 
+                class="w-full pl-11 pr-4 py-4 rounded-2xl border-none shadow-xl ring-1 ring-slate-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white/90 backdrop-blur-md text-base transition-all">
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+            <div class="bg-slate-50 border-b border-slate-100 text-slate-400 uppercase tracking-widest px-4 py-3 flex items-center">
+                <div class="flex-1 label-font">產品名稱</div>
+                <div class="w-20 text-center label-font">數量</div>
+                <div class="w-24 text-right label-font">小計</div>
+            </div>
+            <div id="productContainer" class="divide-y divide-slate-50"></div>
+            <div class="bg-slate-100/30 border-t border-slate-100 px-4 py-2 label-font text-slate-400 uppercase tracking-wider">費用項目</div>
+            <div id="feeContainer" class="divide-y divide-slate-50"></div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-100 z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]" 
+         style="padding-bottom: env(safe-area-inset-bottom); min-height: 100px;">
+        <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between gap-2">
+            <div class="flex gap-4">
+                <div class="flex flex-col">
+                    <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">總金額</span>
+                    <span id="totalPrice" class="text-xl font-black text-red-600 leading-none tabular-nums">$0</span>
+                </div>
+                <div class="flex flex-col border-l border-slate-100 pl-4">
+                    <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">總PV值</span>
+                    <span id="totalPV" class="text-xl font-black text-orange-500 leading-none tabular-nums">0</span>
+                    <div id="promoNotice" class="promo-pulse leading-tight h-4 mt-0.5 min-w-[80px]"></div>
+                </div>
+            </div>
+            <div class="flex gap-2 flex-1 justify-end items-center">
+                <button onclick="toggleSummary(true)" class="px-5 py-3.5 rounded-2xl bg-blue-50 text-blue-600 font-black border border-blue-100 flex items-center gap-2 text-sm active:scale-95 transition-all shadow-sm">
+                    <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                    <span>明細</span>
+                </button>
+                <button onclick="copyToClipboard()" class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center active:scale-95 transition-all shadow-lg">
+                    <i data-lucide="copy" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="summaryModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-3 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="px-6 py-5 border-b flex justify-between items-center bg-white sticky top-0 z-10">
+                <h2 class="text-xl font-black text-slate-700 tracking-widest uppercase flex items-center gap-2">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 text-orange-500"></i> 訂單明細
+                </h2>
+                <button onclick="toggleSummary(false)" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="p-0 overflow-y-auto flex-1 custom-scrollbar bg-white">
+                <table class="w-full border-collapse">
+                    <thead class="bg-slate-50 border-b text-slate-400 sticky top-0 z-10">
+                        <tr>
+                            <th class="px-6 py-3 text-left label-font">產品名稱</th>
+                            <th class="px-2 py-3 text-center label-font">數量</th>
+                            <th class="px-6 py-3 text-right label-font">金額/PV值</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summaryContent" class="divide-y divide-slate-50"></tbody>
+                </table>
+                <div id="modalPromoSection" class="p-6 bg-rose-50/50 hidden border-t border-rose-100">
+                    <div class="flex items-center gap-2 text-rose-600 font-black text-sm mb-2">
+                        <i data-lucide="gift" class="w-4 h-4"></i> 母親節活動達標贈品：
+                    </div>
+                    <div id="modalPromoDesc" class="text-rose-500 text-[15px] font-bold leading-relaxed pl-6"></div>
+                </div>
+            </div>
+
+            <div class="px-8 py-6 bg-slate-50 border-t border-slate-100">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex flex-col items-center"><span class="text-slate-400 text-xs font-bold mb-1">產品件數</span><span id="modalProdQty" class="text-xl font-black text-slate-700">0</span></div>
+                    <div class="flex flex-col items-center"><span class="text-slate-400 text-xs font-bold mb-1">贈品件數</span><span id="modalGiftQty" class="text-xl font-black text-pink-500">0</span></div>
+                    <div class="flex flex-col items-center"><span class="text-slate-400 text-xs font-bold mb-1">總PV值</span><span id="modalPV" class="text-xl font-black text-orange-500">0</span></div>
+                    <div class="flex flex-col items-end"><span class="text-slate-400 text-xs font-bold mb-1">總金額</span><span id="modalTotal" class="text-xl font-black text-red-600">$0</span></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="toggleSummary(false)" class="py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-sm shadow-sm active:scale-95 transition-all">返回修改</button>
+                    <button onclick="copyToClipboard(); toggleSummary(false);" class="py-4 bg-slate-900 text-white rounded-2xl font-black text-sm shadow-md active:scale-95 transition-all">複製明細內容</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let quantities = {};
+        const PRODUCT_DATA = [
+            { id: 'J017', alias: 'A1', name: '深層潔膚油', price: 1995, pv: 1700 },
+            { id: 'J001', alias: '1', name: '雙效潔顏露', price: 1995, pv: 1700 },
+            { id: 'J002', alias: '2', name: '平衡柔膚露', price: 1995, pv: 1700 },
+            { id: 'J003', alias: '3', name: '全效緊緻眼霜', price: 3990, pv: 3500 },
+            { id: 'J004', alias: '4', name: '煥白晶華霜', price: 4200, pv: 3600 },
+            { id: 'J005', alias: '5', name: '均衡調理霜', price: 4200, pv: 3600 },
+            { id: 'J006', alias: '6A', name: '亮白防護霜', price: 3990, pv: 3500 },
+            { id: 'J006-1', alias: '6B', name: '潤白防護霜', price: 3990, pv: 3500 },
+            { id: 'J008', alias: '8', name: '賦活菁華霜', price: 3990, pv: 3500 },
+            { id: 'J009', alias: '9', name: '保濕修護霜', price: 2415, pv: 1800 },
+            { id: 'J010', alias: '10', name: '瞬效亮麗精純液', price: 3465, pv: 3000 },
+            { id: 'J019', alias: '12', name: '煥采青春露', price: 2415, pv: 1800 },
+            { id: 'J011', alias: '', name: 'Bio雪肌面膜', price: 2415, pv: 1800 },
+            { id: 'J012', alias: '', name: '嫩白C粉', price: 3465, pv: 3000 },
+            { id: 'J012-1', alias: '', name: '嫩白C粉 (大)', price: 29400, pv: 26000 },
+            { id: 'J014', alias: '', name: 'joli青春元素-F', price: 1995, pv: 1700, isHealth: true, showLeaf: true },
+            { id: 'J015', alias: '', name: 'joli亮采元素-L', price: 1995, pv: 1700, isHealth: true, showLeaf: true },
+            { id: 'J021', alias: '', name: '纖麗365', price: 2625, pv: 2300, isHealth: true, showLeaf: true },
+            { id: 'J024', alias: '', name: '纖麗365酵素S1', price: 2625, pv: 2300, isHealth: true, showLeaf: true },
+            { id: 'J022', alias: '', name: '麗瑞頂級橄欖油', price: 3210, pv: 2400, isHealth: true, showLeaf: true },
+            { id: 'J023', alias: '', name: '天麗紅蔘精華飲', price: 3210, pv: 2400, isHealth: true, showLeaf: true },
+            { id: 'J025', alias: '', name: '麗穩康', price: 3210, pv: 2200, isHealth: true, showLeaf: true },
+            { id: 'J026', alias: '', name: '麗穩膳', price: 3210, pv: 2200, isHealth: true, showLeaf: true }
+        ];
+
+        const FEES = [
+            { id: 'FEE_JOIN', alias: '', name: '入會費', price: 1000, pv: 0, isFee: true },
+            { id: 'FEE_RENEW', alias: '', name: '續約費', price: 500, pv: 0, isFee: true }
+        ];
+
+        const PROMOS = [
+            { threshold: 200000, desc: "5萬天麗幣 + 天麗隨行杯x2 + 天麗萬用保養包 + C粉", value: 58443 },
+            { threshold: 100000, desc: "2萬天麗幣 + 天麗隨行杯 + 天麗萬用保養包", value: 24479 },
+            { threshold: 50000,  desc: "6A + 9 + 12 號", value: 8820 },
+            { threshold: 32000,  desc: "1 + 9 號", value: 4410 },
+            { threshold: 19000,  desc: "2 號", value: 1995 }
+        ];
+
+        // 計算贈品總件數的核心邏輯
+        function calculateGiftQty(pv) {
+            let giftCount = 0;
+            
+            // 1. 滿額贈品件數計算
+            const activePromo = PROMOS.find(p => pv >= p.threshold);
+            if (activePromo) {
+                const parts = activePromo.desc.split('+').map(s => s.trim());
+                parts.forEach(part => {
+                    if (part.includes('天麗幣')) return; // 不算件數
+                    
+                    // 檢查是否有 xN 的標記
+                    const match = part.match(/x(\d+)/);
+                    if (match) {
+                        giftCount += parseInt(match[1]);
+                    } else {
+                        // 如果是 "6A + 9 + 12" 這種格式
+                        const subParts = part.split(' ').filter(p => p !== '');
+                        giftCount += subParts.length > 0 ? 1 : 0;
+                    }
+                });
+            }
+
+            // 2. 買8送1件數計算
+            PRODUCT_DATA.filter(p => p.isHealth).forEach(p => {
+                const qty = quantities[p.id] || 0;
+                if (qty >= 8) giftCount += Math.floor(qty / 8);
+            });
+
+            return giftCount;
+        }
+
+        window.resetAll = function() {
+            quantities = {}; 
+            const input = document.getElementById('searchInput');
+            if (input) input.value = '';
+            renderTable(); 
+            showMessage('清單已重置');
+        };
+
+        function showMessage(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-800/90 text-white px-8 py-4 rounded-3xl shadow-2xl z-[100] font-black text-sm toast-animate backdrop-blur-md';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 200); }, 1500);
+        }
+
+        function renderTable() {
+            const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+            const productContainer = document.getElementById('productContainer');
+            const feeContainer = document.getElementById('feeContainer');
+            productContainer.innerHTML = '';
+            PRODUCT_DATA.filter(p => p.name.includes(searchTerm) || p.id.toLowerCase().includes(searchTerm) || p.alias.toLowerCase().includes(searchTerm))
+                .forEach(item => productContainer.appendChild(createRow(item, false)));
+            feeContainer.innerHTML = '';
+            FEES.forEach(item => feeContainer.appendChild(createRow(item, true)));
+            updateTotals();
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        function createRow(item, isFee = false) {
+            const div = document.createElement('div');
+            div.className = `flex items-center px-4 py-5 ${isFee ? 'bg-orange-50/20' : ''}`;
+            const qty = quantities[item.id] || 0;
+            div.innerHTML = `
+                <div class="flex-1 overflow-hidden pr-2">
+                    <div class="item-name flex items-baseline gap-x-1">
+                        <span>${item.name}</span>
+                        ${item.alias ? `<span class="item-alias">(${item.alias})</span>` : ''}
+                        ${item.showLeaf ? `<span class="inline-flex items-center justify-center p-0.5 bg-emerald-100 rounded-md ml-1"><i data-lucide="leaf" class="w-3 h-3 text-emerald-600"></i></span>` : ''}
+                    </div>
+                    <div class="item-sub mt-1 flex flex-wrap gap-x-2 items-center">
+                        ${!isFee ? `<span class="text-slate-300 font-bold">#${item.id}</span>` : ''}
+                        <span class="text-red-600 font-black">$${item.price.toLocaleString()}</span>
+                        ${item.pv > 0 ? `<span class="text-orange-400 font-black">${item.pv}_PV</span>` : ''}
+                    </div>
+                </div>
+                <div class="w-20 shrink-0 flex items-center justify-center">
+                    <div class="flex items-center bg-slate-100 rounded-2xl p-0.5 border border-slate-200">
+                        <button onclick="updateQty('${item.id}', -1)" class="w-8 h-8 flex items-center justify-center text-slate-400 font-black">-</button>
+                        <input type="number" oninput="setQty('${item.id}', this.value)" class="w-8 text-center font-black bg-transparent outline-none text-xs" value="${qty || ''}" placeholder="0">
+                        <button onclick="updateQty('${item.id}', 1)" class="w-8 h-8 flex items-center justify-center text-slate-400 font-black">+</button>
+                    </div>
+                </div>
+                <div class="w-24 text-right shrink-0">
+                    <div class="money-font ${qty > 0 ? 'opacity-100' : 'text-slate-200'}">$${(qty * item.price).toLocaleString()}</div>
+                    ${item.pv > 0 && qty > 0 ? `<div class="pv-font uppercase mt-0.5">${(qty * item.pv).toLocaleString()}_PV</div>` : ''}
+                </div>
+            `;
+            return div;
+        }
+
+        function updateQty(id, delta) { quantities[id] = Math.max(0, (quantities[id] || 0) + delta); renderTable(); }
+        function setQty(id, val) { quantities[id] = Math.max(0, parseInt(val) || 0); updateTotals(); }
+
+        function updateTotals() {
+            let price = 0, pv = 0, prodQty = 0;
+            PRODUCT_DATA.forEach(item => { const qty = quantities[item.id] || 0; price += item.price * qty; pv += item.pv * qty; prodQty += qty; });
+            FEES.forEach(item => { price += item.price * (quantities[item.id] || 0); });
+            
+            document.getElementById('totalPrice').innerText = `$${price.toLocaleString()}`;
+            document.getElementById('totalPV').innerText = pv.toLocaleString();
+            
+            const activePromo = PROMOS.find(p => pv >= p.threshold);
+            const noticeEl = document.getElementById('promoNotice');
+            if (activePromo) {
+                noticeEl.innerText = `🎁 已達標：贈${activePromo.desc.split('+')[0]}...`;
+            } else {
+                noticeEl.innerText = "";
+            }
+
+            document.getElementById('modalTotal').innerText = `$${price.toLocaleString()}`;
+            document.getElementById('modalPV').innerText = pv.toLocaleString();
+            document.getElementById('modalProdQty').innerText = prodQty;
+            document.getElementById('modalGiftQty').innerText = calculateGiftQty(pv);
+        }
+
+        function toggleSummary(show) {
+            const modal = document.getElementById('summaryModal');
+            const content = document.getElementById('summaryContent');
+            if (show) {
+                content.innerHTML = '';
+                const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
+                let currentPV = 0;
+
+                if (activeItems.length === 0) {
+                    content.innerHTML = '<tr><td colspan="3" class="py-24 text-center text-slate-300 font-black label-font">目前的清單為空</td></tr>';
+                    document.getElementById('modalPromoSection').classList.add('hidden');
+                } else {
+                    activeItems.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.className = `border-b border-slate-50`;
+                        const qty = quantities[item.id];
+                        if(!item.isFee) currentPV += (item.pv * qty);
+                        
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 text-left">
+                                <div class="item-name text-slate-800 flex items-center gap-1">
+                                    ${item.name}
+                                    ${item.showLeaf ? `<i data-lucide="leaf" class="w-3 h-3 text-emerald-600"></i>` : ''}
+                                </div>
+                                <div class="item-sub mt-1 flex gap-2 items-center">
+                                    ${!item.isFee ? `<span class="text-slate-300 font-bold">#${item.id}</span>` : ''}
+                                    ${(!item.isFee && item.alias) ? `<span class="text-emerald-600 font-bold">(${item.alias})</span>` : ''}
+                                </div>
+                            </td>
+                            <td class="px-2 py-4 text-center font-black text-slate-900 money-font">x${qty}</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="money-font">$${(qty * item.price).toLocaleString()}</div>
+                                ${(!item.isFee && item.pv > 0) ? `<div class="pv-font leading-none mt-1">${(qty * item.pv).toLocaleString()}_PV</div>` : ''}
+                            </td>`;
+                        content.appendChild(tr);
+                    });
+
+                    const promo = PROMOS.find(p => currentPV >= p.threshold);
+                    const promoSec = document.getElementById('modalPromoSection');
+                    if (promo) {
+                        promoSec.classList.remove('hidden');
+                        document.getElementById('modalPromoDesc').innerText = promo.desc;
+                    } else {
+                        promoSec.classList.add('hidden');
+                    }
+                    
+                    PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] >= 8)).forEach(p => {
+                        const giftQty = Math.floor(quantities[p.id] / 8);
+                        const trGift = document.createElement('tr');
+                        trGift.className = "bg-emerald-50/40 border-b border-emerald-100";
+                        trGift.innerHTML = `
+                            <td class="px-6 py-3 text-emerald-700 font-black text-sm flex items-center gap-1">
+                                <i data-lucide="arrow-right-to-line" class="w-4 h-4"></i> 贈：${p.name} (買8送1)
+                            </td>
+                            <td class="px-2 py-3 text-center text-emerald-700 font-black text-sm">x${giftQty}</td>
+                            <td class="px-6 py-3 text-right text-emerald-600 font-black text-sm italic">FREE</td>
+                        `;
+                        content.appendChild(trGift);
+                    });
+                }
+                modal.classList.remove('hidden');
+                if (window.lucide) window.lucide.createIcons();
+            } else { modal.classList.add('hidden'); }
+        }
+
+        function copyToClipboard() {
+            let text = "--- 天麗生技訂購明細 (母親節特惠) ---\n";
+            let totalP = 0, totalPV = 0, prodQ = 0;
+            const items = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
+            if (items.length === 0) { showMessage('目前清單為空'); return; }
+            
+            items.forEach(item => {
+                const qty = quantities[item.id];
+                text += `${item.name}${item.alias ? '('+item.alias+')' : ''} x ${qty} = $${(item.price * qty).toLocaleString()}\n`;
+                totalP += item.price * qty;
+                if (!item.isFee) { totalPV += item.pv * qty; prodQ += qty; }
+            });
+
+            PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] >= 8)).forEach(p => {
+                text += `🎁 [買8送1] 贈：${p.name} x ${Math.floor(quantities[p.id]/8)}\n`;
+            });
+
+            text += `------------------------\n`;
+            
+            const promo = PROMOS.find(p => totalPV >= p.threshold);
+            if (promo) {
+                text += `★ 滿額達標：${promo.desc}\n`;
+                text += `------------------------\n`;
+            }
+
+            text += `產品件數: ${prodQ}\n`;
+            text += `贈品件數: ${calculateGiftQty(totalPV)}\n`;
+            text += `總金額: $${totalP.toLocaleString()}\n總PV值: ${totalPV.toLocaleString()}`;
+            
+            const el = document.createElement('textarea');
+            el.value = text;
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            try { document.execCommand('copy'); showMessage('明細已複製到剪貼簿！'); } catch (err) { showMessage('複製失敗'); }
+            document.body.removeChild(el);
+        }
+
+        document.addEventListener('DOMContentLoaded', renderTable);
+    </script>
+</body>
+</html>
