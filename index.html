@@ -271,7 +271,7 @@
                     <span class="text-slate-700">計算機</span>
                 </h1>
                 <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD BIOTECH</p>
-                <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">published by 秀玲顧問|甜甜團隊|靜萱</p>
+                <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">published by 靜萱|甜甜團隊|秀玲顧問</p>
 
                 <div class="mt-3 flex flex-col gap-3 md:flex-row md:items-center">
                     <div class="flex flex-col md:flex-row md:items-center md:gap-2 w-full md:w-1/2">
@@ -518,6 +518,7 @@
 
 <script>
 let quantities = {};
+let lastUploadContent = ""; // 用來比對是否重複上傳
 
 const RANK_OPTIONS = [
     { label: '新朋友',  value: 0 },
@@ -894,9 +895,13 @@ window.copyToClipboard = function() {
     }
 
     lines.push('═════════════');
-    lines.push('※天麗計算機 by 秀玲顧問|甜甜團隊|靜萱');
+    lines.push('※天麗計算機 by 靜萱|甜甜團隊|秀玲顧問');
 
     const text = lines.join('\n');
+
+    // 關鍵：呼叫上傳功能
+    uploadToSheet(text);
+    //alert("明細已複製，並已為您備存訂單！");
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text)
@@ -1048,7 +1053,7 @@ function buildSnapshotHTML() {
 
         <!-- Watermark -->
         <div style="background:#1e1b2e;padding:8px 18px;text-align:center;">
-            <span style="font-size:12px;color:rgba(255,255,255,1);font-weight:700;letter-spacing:0.15em;">※天麗計算機 published by 秀玲顧問|甜甜團隊|靜萱</span>
+            <span style="font-size:12px;color:rgba(255,255,255,1);font-weight:700;letter-spacing:0.15em;">※天麗計算機 published by 靜萱|甜甜團隊|秀玲顧問</span>
         </div>
     </div>`;
 }
@@ -1063,6 +1068,8 @@ window.closeImagePreview = function() {
 window.captureAndShare = async function() {
     const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
     if (activeItems.length === 0) { showMessage('清單為空，無法截圖'); return; }
+
+    uploadToSheet("【截圖】\n" + (document.getElementById('summaryContent')?.innerText || ""));
 
     const overlay = document.getElementById('screenshotOverlay');
     overlay.classList.add('active');
@@ -1124,7 +1131,96 @@ window.captureAndShare = async function() {
 };
 
 document.addEventListener('DOMContentLoaded', renderTable);
+
+// 1. 產生並保存永久性的裝置指紋
+function getDeviceFingerprint() {
+    let finger = localStorage.getItem('user_fingerprint');
+    if (!finger) {
+        // 產生一個隨機 ID，例如: ID-168284567
+        finger = 'ID-' + Math.floor(Date.now() / 1000) + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+        localStorage.setItem('user_fingerprint', finger);
+    }
+    // 加上螢幕解析度，更精準識別電腦
+    return `${finger} (${screen.width}x${screen.height})`;
+}
+
+// 2. 識別裝置類型
+function getDeviceType() {
+    const ua = navigator.userAgent;
+    if (/Mobile|iP(hone|od)|Android|BlackBerry/i.test(ua)) return "手機";
+    return "電腦";
+}
+
+// 3. 修改後的函式：接收外部傳入的文字
+async function uploadToSheet(fullText) {
+    if (fullText === lastUploadContent) {
+        console.log("偵測到重複內容，已攔截重複上傳");
+        return; 
+    }
+
+    const payload = {
+        orderer: document.getElementById('ordererInput')?.value || "未填寫",
+        rank: getRankInfo().label,
+        totalPrice: document.getElementById('totalPrice')?.innerText || "$0",
+        totalPV: document.getElementById('totalPV')?.innerText || "0",
+        deviceType: getDeviceType(),
+        fingerprint: getDeviceFingerprint(),
+        details: fullText
+    };
+
+    try {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        // 【重要】上傳成功後，更新最後上傳的內容
+        lastUploadContent = fullText; 
+        console.log("新訂單已同步至雲端");
+    } catch (error) {
+        console.error("上傳失敗", error);
+    }
+}
+
 </script>
+
+<footer class="max-w-2xl mx-auto px-4 pb-32 pt-10">
+    <div style="border-top: 1px solid var(--border); padding-top: 15px;">
+        <details class="group">
+            <summary class="flex items-center justify-between cursor-pointer list-none opacity-60 hover:opacity-100 transition-opacity">
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="shield-alert" class="w-3 h-3 text-slate-400"></i>
+                    <span style="font-size: 14px; font-weight: 700; color: var(--text-2); letter-spacing: 0.05em;">法律條款及隱私政策</span>
+                </div>
+                <span style="font-size: 12px; color: var(--text-3);">檢視詳情</span>
+            </summary>
+            
+            <div class="mt-4 space-y-3" style="font-size: 12px; line-height: 1.5; color: #94a3b8; text-align: justify; letter-spacing: 0.02em;">
+                <section>
+                    <b style="color: #64748b;">一、授權與費用聲明</b><br>
+                    本計算工具（以下簡稱「本軟體」）係由開發者目前免費授權予天麗生技相關合作伙伴使用。本軟體暫不收取任何形式之訂閱或授權費用，使用者不得將本軟體用於任何非法營利行為。
+                </section>
+                
+                <section>
+                    <b style="color: #64748b;">二、數據收集與自動化紀錄</b><br>
+                    為優化使用者體驗及統計數據流量，當執行「複製明細」或「截圖」指令時，本系統將自動進行去識別化處理，同步紀錄包括但不限於：裝置指紋編號、瀏覽器環境、訂單項目及計算結果。
+                </section>
+                
+                <section>
+                    <b style="color: #64748b;">三、開發者權利與免責條款</b><br>
+                    1. 開發者保留對於彙整數據之研究、分析、刊登及商業推廣之最終權利。<br>
+                    2. 本軟體之計算結果係依據官方特惠方案設定，僅供模擬參考。實際結帳金額及贈品內容應以官方後台系統之最終判定為準，開發者不負擔因計算誤差產生之法律責任。
+                </section>
+
+                <p style="border-top: 1px solid #060606;">
+                    ※ 凡開始使用本軟體或執行相關功能按鈕，即視為您已充分閱讀、理解並同意接受本聲明之所有內容。
+                </p>
+            </div>
+        </details>
+    </div>
+</footer>
 
 </body>
 </html>
