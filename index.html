@@ -519,6 +519,7 @@
 <script>
 let quantities = {};
 let lastUploadContent = ""; // 用來比對是否重複上傳
+let currentOrderTime = "";
 
 const RANK_OPTIONS = [
     { label: '新朋友',  value: 0 },
@@ -826,83 +827,16 @@ function toggleSummary(show) {
 }
 
 window.copyToClipboard = function() {
-    const orderer = getOrderer();
-    const rank = getRankInfo();
     const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
+    if (activeItems.length === 0) { showMessage('清單為空，無法複製'); return; }
 
-    if (activeItems.length === 0) {
-        showMessage('清單為空，無法複製');
-        return;
-    }
-
-    let totalPrice = 0, totalPV = 0, prodQty = 0;
-    let lines = [];
-
-    lines.push('═════════════');
-    lines.push('  訂單明細（母親節特惠版）');
-    lines.push('═════════════');
-    if (orderer) lines.push(`  訂購人：${orderer}`);
-
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    lines.push(`  日期：${dateStr}`);
-    lines.push('─────────────');
-
-    activeItems.forEach(item => {
-        const qty = quantities[item.id] || 0;
-        const subtotal = item.price * qty;
-        totalPrice += subtotal;
-        if (!item.isFee) {
-            totalPV += item.pv * qty;
-            prodQty += qty;
-        }
-        const alias = item.alias ? ` (${item.alias})` : '';
-        lines.push(`▪ ${item.name}${alias}`);
-        lines.push(`  數量：x ${qty} ＝ $${subtotal.toLocaleString()}`);
-        if (!item.isFee && item.pv > 0) {
-            lines.push(`  PV：${(item.pv * qty).toLocaleString()}`);
-        }
-    });
-
-    const healthGifts = PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] || 0) >= 8);
-    if (healthGifts.length > 0) {
-        lines.push('─────────────');
-        lines.push('🎁 買8送1贈品：');
-        healthGifts.forEach(p => {
-            const gq = Math.floor(quantities[p.id] / 8);
-            lines.push(`  ${p.name} ×${gq}`);
-        });
-    }
-
-    const promo = PROMOS.find(p => totalPV >= p.threshold);
-    if (promo) {
-        lines.push('─────────────');
-        lines.push('🎁 母親節活動達標贈品：');
-        lines.push(`  ${promo.desc}`);
-    }
-
-    lines.push('═════════════');
-    lines.push(`  產品件數：${prodQty}`);
-    lines.push(`  贈品件數：${calculateGiftQty(totalPV)}`);
-    lines.push(`  總 PV 值：${totalPV.toLocaleString()}`);
-    lines.push(`  總 金 額：$${totalPrice.toLocaleString()}`);
-
-    if (rank.value > 0) {
-        const bonus = Math.round(totalPV * rank.value);
-        lines.push('─────────────');
-        lines.push(`  位階：${rank.label} (${Math.round(rank.value*100)}%)`);
-        lines.push(`  業績獎金：$${bonus.toLocaleString()}`);
-    }
-
-    lines.push('═════════════');
-    lines.push('※天麗計算機 by 靜萱|甜甜團隊|秀玲顧問');
-
-    const text = lines.join('\n');
-
-    // 關鍵：呼叫上傳功能
+    // 直接呼叫產生器
+    const text = generateFullOrderText();
+    
+    // 上傳至 Google Sheet
     uploadToSheet(text);
-    //alert("明細已複製，並已為您備存訂單！");
 
+    // 複製到剪貼簿
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text)
             .then(() => showMessage('✅ 已複製到剪貼簿！'))
@@ -1069,7 +1003,9 @@ window.captureAndShare = async function() {
     const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
     if (activeItems.length === 0) { showMessage('清單為空，無法截圖'); return; }
 
-    uploadToSheet("【截圖】\n" + (document.getElementById('summaryContent')?.innerText || ""));
+    // 【修正點】讓截圖上傳的文字內容與複製內容完全同步
+    const textForUpload = generateFullOrderText();
+    uploadToSheet(textForUpload);
 
     const overlay = document.getElementById('screenshotOverlay');
     overlay.classList.add('active');
@@ -1132,6 +1068,77 @@ window.captureAndShare = async function() {
 
 document.addEventListener('DOMContentLoaded', renderTable);
 
+// 【新增】統一明細產生器：確保複製與截圖的內容 100% 一致
+function generateFullOrderText() {
+    const orderer = getOrderer();
+    const rank = getRankInfo();
+    const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
+    
+    let totalPrice = 0, totalPV = 0, prodQty = 0;
+    let lines = [];
+
+    lines.push('═════════════');
+    lines.push('  訂單明細（母親節特惠版）');
+    lines.push('═════════════');
+    if (orderer) lines.push(`  訂購人：${orderer}`);
+    
+    const now = new Date();
+    // 產生一致的時間格式：2026/03/01 18:50
+    currentOrderTime = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    
+    lines.push(`  日期：${currentOrderTime}`);
+    lines.push('─────────────');
+
+    activeItems.forEach(item => {
+        const qty = quantities[item.id] || 0;
+        const subtotal = item.price * qty;
+        totalPrice += subtotal;
+        if (!item.isFee) { totalPV += item.pv * qty; prodQty += qty; }
+        const alias = item.alias ? ` (${item.alias})` : '';
+        lines.push(`▪ ${item.name}${alias}`);
+        lines.push(`  數量：x ${qty} ＝ $${subtotal.toLocaleString()}`);
+        if (!item.isFee && item.pv > 0) {
+            lines.push(`  PV：${(item.pv * qty).toLocaleString()}`);
+        }
+    });
+
+    // 贈品邏輯
+    const healthGifts = PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] || 0) >= 8);
+    if (healthGifts.length > 0) {
+        lines.push('─────────────');
+        lines.push('🎁 買8送1贈品：');
+        healthGifts.forEach(p => {
+            const gq = Math.floor(quantities[p.id] / 8);
+            lines.push(`  ${p.name} ×${gq}`);
+        });
+    }
+
+    const promo = PROMOS.find(p => totalPV >= p.threshold);
+    if (promo) {
+        lines.push('─────────────');
+        lines.push('🎁 母親節活動達標贈品：');
+        lines.push(`  ${promo.desc}`);
+    }
+
+    lines.push('═════════════');
+    lines.push(`  產品件數：${prodQty}`);
+    lines.push(`  贈品件數：${calculateGiftQty(totalPV)}`);
+    lines.push(`  總 PV 值：${totalPV.toLocaleString()}`);
+    lines.push(`  總 金 額：$${totalPrice.toLocaleString()}`);
+
+    if (rank.value > 0) {
+        const bonus = Math.round(totalPV * rank.value);
+        lines.push('─────────────');
+        lines.push(`  位階：${rank.label} (${Math.round(rank.value*100)}%)`);
+        lines.push(`  業績獎金：$${bonus.toLocaleString()}`);
+    }
+
+    lines.push('═════════════');
+    lines.push('※天麗計算機 by 靜萱|甜甜團隊|秀玲顧問');
+    
+    return lines.join('\n');
+}
+
 // 1. 產生並保存永久性的裝置指紋
 function getDeviceFingerprint() {
     let finger = localStorage.getItem('user_fingerprint');
@@ -1153,14 +1160,22 @@ function getDeviceType() {
 
 // 3. 修改後的函式：接收外部傳入的文字
 async function uploadToSheet(fullText) {
-    if (fullText === lastUploadContent) {
-        console.log("偵測到重複內容，已攔截重複上傳");
+    // 【核心修正】改用「純資料」組合當作比對的 Key
+    const orderer = getOrderer();
+    const rank = getRankInfo().label;
+    // 將產品數量物件轉成字串，這是最純粹的內容比對
+    const dataKey = JSON.stringify(quantities) + orderer + rank;
+
+    // 比對 DataKey 而不是比對帶有時間戳記的 fullText
+    if (dataKey === window.lastDataKey) {
+        console.log("訂單內容完全相同，攔截重複上傳");
         return; 
     }
 
     const payload = {
-        orderer: document.getElementById('ordererInput')?.value || "未填寫",
-        rank: getRankInfo().label,
+        timeStamp: currentOrderTime, // 【新增】傳送跟明細一模一樣的時間字串
+        orderer: orderer,
+        rank: rank,
         totalPrice: document.getElementById('totalPrice')?.innerText || "$0",
         totalPV: document.getElementById('totalPV')?.innerText || "0",
         deviceType: getDeviceType(),
@@ -1176,9 +1191,10 @@ async function uploadToSheet(fullText) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        // 【重要】上傳成功後，更新最後上傳的內容
-        lastUploadContent = fullText; 
-        console.log("新訂單已同步至雲端");
+        
+        // 儲存這次的 DataKey
+        window.lastDataKey = dataKey; 
+        console.log("新訂單已同步");
     } catch (error) {
         console.error("上傳失敗", error);
     }
