@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-    <title>天麗計算機-17週年慶特惠版</title>
+    <title>2026 天麗生技 17週年慶特惠</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -179,6 +179,34 @@
             padding-right: 28px !important;
         }
 
+        .currency-toggle {
+            display: flex;
+            align-items: center;
+            background: var(--surface-3);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 2px;
+            width: 100%;
+        }
+        .currency-btn {
+            flex: 1;
+            padding: 5px 6px;
+            border-radius: 9px;
+            font-size: clamp(10px, 2.7vw, 12px);
+            font-weight: 900;
+            color: var(--text-2);
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .currency-btn.active {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            box-shadow: 0 2px 8px rgba(124,58,237,0.3);
+        }
+
         /* Screenshot loading overlay */
         #screenshotOverlay {
             display: none;
@@ -266,56 +294,67 @@
     <header class="card p-4 mb-4">
         <div class="flex justify-between items-start gap-2">
             <div class="flex-1 min-w-0">
-                <h1 class="text-2xl font-black flex items-baseline gap-2 flex-wrap">
-                    <span class="gradient-text">天麗生技</span>
-                    <span class="text-slate-700">計算機</span>
-                </h1>
-                <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD BIOTECH</p>
-                <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">published by 靜萱|甜甜團隊|秀玲顧問</p>
+                <!-- 僅標題區塊置中 -->
+                <div class="text-center">
+                    <h1 class="text-2xl font-black flex items-baseline justify-center gap-2 flex-wrap">
+                        <span class="gradient-text">天麗生技</span>
+                        <span class="text-slate-700">計算機</span>
+                    </h1>
+                    <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD BIOTECH</p>
+                    <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 甜甜團隊 ★ 秀玲顧問</p>
+                </div>
 
-                <div class="mt-3 flex flex-col gap-3 md:flex-row md:items-center">
-                    <div class="flex flex-col md:flex-row md:items-center md:gap-2 w-full md:w-1/2">
-                        <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);">訂購人：</label>
-                        <input type="text" id="ordererInput" placeholder="姓名"
-                            style="flex:1; min-width:0; border:1.5px solid var(--border); border-radius:10px; padding:5px 8px; font-size:clamp(11px,3vw,13px); font-weight:700; color:var(--text-1); background:var(--surface-3); outline:none;"
-                            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"
-                            oninput="updateOrderer()">
+                <!-- 控制欄位區域（幣別獨立一排，訂購人與位階維持原樣並排） -->
+                <div class="mt-4 flex flex-col gap-3 text-left">
+                    <div class="flex items-center gap-2">
+                        <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);white-space:nowrap;flex-shrink:0;">計價幣別：</label>
+                        <div class="currency-toggle" style="width:240px;max-width:100%;">
+                            <button type="button" id="btnCurrTWD" onclick="setCurrency('TWD')" class="currency-btn active">🇹🇼 台幣 (NT$)</button>
+                            <button type="button" id="btnCurrMYR" onclick="setCurrency('MYR')" class="currency-btn">🇲🇾 馬幣 (RM)</button>
+                        </div>
                     </div>
 
-                    <div class="flex flex-col md:flex-row md:items-center md:gap-2 w-full md:w-1/2">
-                        <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);">位階：</label>
-                        <select id="rankSelect" onchange="updateTotals()"
-                            style="flex:1; min-width:0; border:1.5px solid var(--border); border-radius:10px; padding:5px 8px; font-size:clamp(11px,3vw,13px); font-weight:700; color:var(--text-1); background:var(--surface-3); outline:none;">
-                            <option value="0">新朋友</option>
-                            <option value="0.25">專員 (25%)</option>
-                            <option value="0.30">主任 (30%)</option>
-                            <option value="0.35">經理 (35%)</option>
-                            <option value="0.37">寶石 (37%)</option>
-                            <option value="0.38">鑽石 (38%)</option>
-                            <option value="0.39">金鑽 (39%)</option>
-                            <option value="0.40">顧問 (40%)</option>
-                        </select>
+                    <div class="flex flex-col gap-3 md:flex-row md:items-center">
+                        <div class="flex items-center gap-2 w-full md:w-1/2">
+                            <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);white-space:nowrap;flex-shrink:0;">訂購人：</label>
+                            <input type="text" id="ordererInput" placeholder="姓名"
+                                style="flex:1; min-width:0; border:1.5px solid var(--border); border-radius:10px; padding:5px 8px; font-size:clamp(11px,3vw,13px); font-weight:700; color:var(--text-1); background:var(--surface-3); outline:none;"
+                                onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"
+                                oninput="updateOrderer()">
+                        </div>
+
+                        <div class="flex items-center gap-2 w-full md:w-1/2">
+                            <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);white-space:nowrap;flex-shrink:0;">位階：</label>
+                            <select id="rankSelect" onchange="updateTotals()"
+                                style="flex:1; min-width:0; border:1.5px solid var(--border); border-radius:10px; padding:5px 8px; font-size:clamp(11px,3vw,13px); font-weight:700; color:var(--text-1); background:var(--surface-3); outline:none;">
+                                <option value="0">新朋友</option>
+                                <option value="0.25">專員 (25%)</option>
+                                <option value="0.30">主任 (30%)</option>
+                                <option value="0.35">經理 (35%)</option>
+                                <option value="0.37">寶石 (37%)</option>
+                                <option value="0.38">鑽石 (38%)</option>
+                                <option value="0.39">金鑽 (39%)</option>
+                                <option value="0.40">顧問 (40%)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-3 space-y-2">
                     <p style="color:var(--rose);font-size:clamp(11px,3vw,13px);font-weight:900;" class="flex items-center gap-1">
-                        <i data-lucide="calendar" class="w-4 h-4 shrink-0"></i> 17週年慶特惠：9/8(一) - 9/18(四)
+                        <i data-lucide="calendar" class="w-4 h-4 shrink-0"></i> 2026【17週年慶特惠】09.05(六) ～ 09.16(三)
                     </p>
                     <div style="background:var(--rose-light);border:1px solid #fecdd3;border-radius:14px;padding:10px 12px;">
-                        <p style="color:#be123c;font-size:clamp(10px,2.8vw,12px);font-weight:900;margin-bottom:4px;">🎁【活動滿額贈】</p>
+                        <p style="color:#be123c;font-size:clamp(10px,2.8vw,12px);font-weight:900;margin-bottom:4px;">🎁【消費回饋 / 贈品方案】</p>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;">
-                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">1.9萬 PV：</span>2號</span>
-                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">3.2萬 PV：</span>2+9號</span>
-                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">5.0萬 PV：</span>6A+9+12+隨行杯</span>
-                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">10萬 PV：</span>2.1萬幣+隨行杯x2</span>
-                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;grid-column:span 2;"><span style="color:var(--text-1);">20萬 PV：</span>5.2萬幣+隨行杯x3 (+摸彩券)</span>
+                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">1.9萬 PV：</span>2 (平衡柔膚露)</span>
+                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">3.2萬 PV：</span>2 (平衡柔膚露) + 9 (保濕修護霜)</span>
+                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;grid-column:span 2;"><span style="color:var(--text-1);">5.0萬 PV：</span>6A (亮白防護霜) + 9 (保濕修護霜) + 12 (煥采青春露)</span>
+                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">10萬 PV：</span>2.1萬 天麗幣 (扭蛋抽獎券x1)</span>
+                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">20萬 PV：</span>5.2萬 天麗幣 (扭蛋抽獎券x2)</span>
                         </div>
                     </div>
                     <p style="color:var(--green);font-size:clamp(11px,3vw,13px);font-weight:800;" class="flex items-center gap-1">
-                        <i data-lucide="leaf" class="w-4 h-4 shrink-0"></i> 保健系列（限同品項）買 8 送 1，再隨機贈「麗穩康」或「麗穩膳」1罐
-                    </p>
-                    <p style="color:var(--rose);font-size:clamp(11px,3vw,13px);font-weight:800;margin-top:2px;" class="flex items-center gap-1">
-                        <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i> 特惠期間，天麗幣暫停使用
+                        <i data-lucide="leaf" class="w-4 h-4 shrink-0"></i> 保健系列專案：買 8 送 1 (限同品項)
                     </p>
                 </div>
             </div>
@@ -523,6 +562,56 @@
 let quantities = {};
 let lastUploadContent = ""; // 用來比對是否重複上傳
 let currentOrderTime = "";
+let currentCurrency = 'TWD';
+
+const PRODUCT_PRICES = {
+    TWD: {
+        'J017': 1995, 'J001': 1995, 'J002': 1995, 'J003': 3990, 'J004': 4200, 'J005': 4200,
+        'J006': 3990, 'J006-1': 3990, 'J008': 3990, 'J009': 2415, 'J010': 3465, 'J019': 2415,
+        'J011': 2415, 'J012': 3465, 'J012-1': 29400, 'J014': 1995, 'J015': 1995, 'J021': 2625,
+        'J024': 2625, 'J022': 3210, 'J023': 3210, 'J025': 3210, 'J026': 3210,
+        'FEE_JOIN': 1000, 'FEE_RENEW': 500
+    },
+    MYR: {
+        'J017': 315, 'J001': 315, 'J002': 315, 'J003': 625, 'J004': 655, 'J005': 655,
+        'J006': 625, 'J006-1': 625, 'J008': 625, 'J009': 380, 'J010': 540, 'J019': 380,
+        'J011': 380, 'J012': 540, 'J012-1': 4530, 'J014': 315, 'J015': 315, 'J021': 410,
+        'J024': 410, 'J022': 500, 'J023': 500, 'J025': 500, 'J026': 500,
+        'FEE_JOIN': 160, 'FEE_RENEW': 80
+    }
+};
+
+function getPrice(item) {
+    if (PRODUCT_PRICES[currentCurrency] && PRODUCT_PRICES[currentCurrency][item.id] !== undefined) {
+        return PRODUCT_PRICES[currentCurrency][item.id];
+    }
+    return item.price;
+}
+
+function formatMoney(amount) {
+    if (currentCurrency === 'MYR') {
+        return `RM ${amount.toLocaleString()}`;
+    }
+    return `$${amount.toLocaleString()}`;
+}
+
+window.setCurrency = function(curr) {
+    if (currentCurrency === curr) return;
+    currentCurrency = curr;
+    const btnTWD = document.getElementById('btnCurrTWD');
+    const btnMYR = document.getElementById('btnCurrMYR');
+    if (btnTWD && btnMYR) {
+        if (curr === 'TWD') {
+            btnTWD.classList.add('active');
+            btnMYR.classList.remove('active');
+        } else {
+            btnMYR.classList.add('active');
+            btnTWD.classList.remove('active');
+        }
+    }
+    renderTable();
+    showMessage(`已切換幣別為：${curr === 'MYR' ? '🇲🇾 馬幣 (RM)' : '🇹🇼 台幣 (NT$)'}`);
+};
 
 const RANK_OPTIONS = [
     { label: '新朋友',  value: 0 },
@@ -567,11 +656,11 @@ const FEES = [
 ];
 
 const PROMOS = [
-    { threshold: 200000, desc: "52,000天麗幣 + 天麗隨行杯x3 + 百萬摸彩券x1", value: 53497 },
-    { threshold: 100000, desc: "21,000天麗幣 + 天麗隨行杯x2",          value: 21998 },
-    { threshold:  50000, desc: "6A + 9 + 12 號 + 天麗隨行杯x1",         value: 9319  },
-    { threshold:  32000, desc: "2 + 9 號",                             value: 4410  },
-    { threshold:  19000, desc: "2 號",                                 value: 1995  }
+    { threshold: 200000, desc: "52,000天麗幣 (附扭蛋抽獎券 X2)", value: 52000 },
+    { threshold: 100000, desc: "21,000天麗幣 (附扭蛋抽獎券 X1)", value: 21000 },
+    { threshold:  50000, desc: "6A號 (亮白防護霜) + 9號 (保濕修護霜) + 12號 (煥采青春露)", value: 8820 },
+    { threshold:  32000, desc: "2號 (平衡柔膚露) + 9號 (保濕修護霜)", value: 4410 },
+    { threshold:  19000, desc: "2號 (平衡柔膚露)", value: 1995 }
 ];
 
 function getOrderer() { return (document.getElementById('ordererInput')?.value || '').trim(); }
@@ -589,19 +678,17 @@ function calculateGiftQty(pv) {
     let giftCount = 0;
     const activePromo = PROMOS.find(p => pv >= p.threshold);
     if (activePromo) {
-        const parts = activePromo.desc.split('+').map(s => s.trim());
-        parts.forEach(part => {
-            if (part.includes('天麗幣')) return;
-            const match = part.match(/x(\d+)/);
-            if (match) giftCount += parseInt(match[1]);
-            else giftCount += 1;
-        });
+        if (activePromo.threshold === 200000) giftCount += 2;
+        else if (activePromo.threshold === 100000) giftCount += 1;
+        else if (activePromo.threshold === 50000) giftCount += 3;
+        else if (activePromo.threshold === 32000) giftCount += 2;
+        else if (activePromo.threshold === 19000) giftCount += 1;
     }
     PRODUCT_DATA.filter(p => p.isHealth).forEach(p => {
         const qty = quantities[p.id] || 0;
         if (qty >= 8) {
             const sets = Math.floor(qty / 8);
-            giftCount += sets * 2; // 1 of same + 1 of 麗穩康/麗穩膳
+            giftCount += sets; // 買8送1 (限同品項)
         }
     });
     return giftCount;
@@ -651,6 +738,7 @@ function createRow(item, isFee = false) {
     div.setAttribute('data-id', item.id);
     div.style.cssText = `display:flex;align-items:center;padding:14px;${isFee ? 'background:rgba(245,158,11,0.04);' : ''}`;
     const qty = quantities[item.id] || 0;
+    const price = getPrice(item);
     div.innerHTML = `
         <div style="flex:1;overflow:hidden;padding-right:8px;min-width:0;">
             <div class="item-name" style="display:flex;align-items:baseline;flex-wrap:wrap;gap:3px;">
@@ -660,7 +748,7 @@ function createRow(item, isFee = false) {
             </div>
             <div class="item-sub" style="margin-top:3px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
                 ${!isFee ? `<span style="color:#cbd5e1;font-weight:700;">#${item.id}</span>` : ''}
-                <span style="color:#dc2626;font-weight:900;">$${item.price.toLocaleString()}</span>
+                <span style="color:#dc2626;font-weight:900;">${formatMoney(price)}</span>
                 ${item.pv > 0 ? `<span style="color:#f59e0b;font-weight:900;">${item.pv}_PV</span>` : ''}
             </div>
         </div>
@@ -673,7 +761,7 @@ function createRow(item, isFee = false) {
             </div>
         </div>
         <div class="row-subtotal" style="width:86px;flex-shrink:0;text-align:right;">
-            <div class="money-font" style="${qty > 0 ? '' : 'color:#e2e8f0'}">$${(qty * item.price).toLocaleString()}</div>
+            <div class="money-font" style="${qty > 0 ? '' : 'color:#e2e8f0'}">${formatMoney(qty * price)}</div>
             <div class="pv-font" style="margin-top:2px;">${item.pv > 0 && qty > 0 ? `${(qty * item.pv).toLocaleString()}_PV` : ''}</div>
         </div>
     `;
@@ -691,6 +779,7 @@ function updateRow(id) {
     const item = allItems.find(i => i.id === id);
     if (!item) return;
     const qty = quantities[id] || 0;
+    const price = getPrice(item);
     const row = document.querySelector(`.product-row[data-id="${id}"]`);
     if (!row) return;
     const input = row.querySelector('.qty-input');
@@ -700,7 +789,7 @@ function updateRow(id) {
         const moneyEl = subtotal.querySelector('.money-font');
         const pvEl    = subtotal.querySelector('.pv-font');
         if (moneyEl) {
-            moneyEl.innerText = `$${(qty * item.price).toLocaleString()}`;
+            moneyEl.innerText = formatMoney(qty * price);
             moneyEl.style.color = qty > 0 ? '' : '#e2e8f0';
         }
         if (pvEl) {
@@ -715,29 +804,29 @@ function updateTotals() {
     let price = 0, pv = 0, prodQty = 0;
     PRODUCT_DATA.forEach(item => {
         const qty = quantities[item.id] || 0;
-        price += item.price * qty; pv += item.pv * qty; prodQty += qty;
+        price += getPrice(item) * qty; pv += item.pv * qty; prodQty += qty;
     });
-    FEES.forEach(item => { price += item.price * (quantities[item.id] || 0); });
+    FEES.forEach(item => { price += getPrice(item) * (quantities[item.id] || 0); });
 
-    document.getElementById('totalPrice').innerText = `$${price.toLocaleString()}`;
+    document.getElementById('totalPrice').innerText = formatMoney(price);
     document.getElementById('totalPV').innerText = pv.toLocaleString();
 
     const activePromo = PROMOS.find(p => pv >= p.threshold);
     const noticeEl = document.getElementById('promoNotice');
-    noticeEl.innerText = activePromo ? `🎁 已達標：贈${activePromo.desc.split('+')[0].trim()}...` : '';
+    noticeEl.innerText = activePromo ? `🎁 已達標：${activePromo.desc}` : '';
 
     const rank = getRankInfo();
-    const bonus = Math.round(pv * rank.value);
+    const bonus = currentCurrency === 'MYR' ? Math.round((pv * rank.value) / 6.5) : Math.round(pv * rank.value);
     const bonusWrap = document.getElementById('bonusWrap');
     if (rank.value > 0) {
         bonusWrap.style.cssText = 'border-left:1.5px solid var(--border);padding-left:10px;display:flex !important;flex-direction:column;';
-        document.getElementById('totalBonus').innerText = `$${bonus.toLocaleString()}`;
+        document.getElementById('totalBonus').innerText = formatMoney(bonus);
         document.getElementById('bonusRankLabel').innerText = `${rank.label} × ${Math.round(rank.value * 100)}%`;
     } else {
         bonusWrap.style.cssText = 'display:none !important;';
     }
 
-    document.getElementById('modalTotal').innerText = `$${price.toLocaleString()}`;
+    document.getElementById('modalTotal').innerText = formatMoney(price);
     document.getElementById('modalPV').innerText = pv.toLocaleString();
     document.getElementById('modalProdQty').innerText = prodQty;
     document.getElementById('modalGiftQty').innerText = calculateGiftQty(pv);
@@ -771,6 +860,7 @@ function toggleSummary(show) {
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid var(--border)';
                 const qty = quantities[item.id];
+                const price = getPrice(item);
                 if (!item.isFee) currentPV += item.pv * qty;
                 tr.innerHTML = `
                     <td style="padding:14px 20px;text-align:left;">
@@ -785,7 +875,7 @@ function toggleSummary(show) {
                     </td>
                     <td style="padding:14px 8px;text-align:center;font-weight:900;color:var(--text-1);font-size:var(--money-size);">×${qty}</td>
                     <td style="padding:14px 20px;text-align:right;">
-                        <div class="money-font">$${(qty * item.price).toLocaleString()}</div>
+                        <div class="money-font">${formatMoney(qty * price)}</div>
                         ${(!item.isFee && item.pv > 0) ? `<div class="pv-font" style="margin-top:2px;">${(qty * item.pv).toLocaleString()}_PV</div>` : ''}
                     </td>`;
                 content.appendChild(tr);
@@ -812,26 +902,17 @@ function toggleSummary(show) {
                     <td style="padding:10px 20px;text-align:right;color:#059669;font-weight:900;font-size:var(--sub-size);font-style:italic;">FREE</td>
                 `;
                 content.appendChild(trGift);
-
-                const trExtra = document.createElement('tr');
-                trExtra.style.cssText = 'background:#f0fdf4;border-bottom:1px solid #bbf7d0;';
-                trExtra.innerHTML = `
-                    <td style="padding:10px 20px;color:#059669;font-weight:900;font-size:var(--sub-size);display:flex;align-items:center;gap:4px;">
-                        <i data-lucide="arrow-right-to-line" class="w-4 h-4 shrink-0"></i> 加贈：麗穩康 或 麗穩膳 (隨機)
-                    </td>
-                    <td style="padding:10px 8px;text-align:center;color:#059669;font-weight:900;font-size:var(--sub-size);">×${giftQty}</td>
-                    <td style="padding:10px 20px;text-align:right;color:#059669;font-weight:900;font-size:var(--sub-size);font-style:italic;">FREE</td>
-                `;
-                content.appendChild(trExtra);
             });
 
             const bonusSec = document.getElementById('modalBonusSection');
             if (rank.value > 0) {
-                const bonus = Math.round(currentPV * rank.value);
+                const bonus = currentCurrency === 'MYR' ? Math.round((currentPV * rank.value) / 6.5) : Math.round(currentPV * rank.value);
                 bonusSec.classList.remove('hidden');
                 document.getElementById('modalRankName').innerText = `${rank.label} (${Math.round(rank.value*100)}%)`;
-                document.getElementById('modalBonusAmt').innerText = bonus.toLocaleString();
-                document.getElementById('modalBonusFormula').innerText = `計算式：${currentPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% = $${bonus.toLocaleString()}`;
+                document.getElementById('modalBonusAmt').innerText = formatMoney(bonus);
+                document.getElementById('modalBonusFormula').innerText = currentCurrency === 'MYR'
+                    ? `計算式：${currentPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% ÷ 6.5 = ${formatMoney(bonus)}`
+                    : `計算式：${currentPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% = ${formatMoney(bonus)}`;
             } else {
                 bonusSec.classList.add('hidden');
             }
@@ -886,12 +967,13 @@ function buildSnapshotHTML() {
     let totalPrice = 0, totalPV = 0, prodQty = 0;
     activeItems.forEach(item => {
         const qty = quantities[item.id] || 0;
-        totalPrice += item.price * qty;
+        const price = getPrice(item);
+        totalPrice += price * qty;
         if (!item.isFee) { totalPV += item.pv * qty; prodQty += qty; }
     });
     const promo = PROMOS.find(p => totalPV >= p.threshold);
     const giftQty = calculateGiftQty(totalPV);
-    const bonus = rank.value > 0 ? Math.round(totalPV * rank.value) : 0;
+    const bonus = rank.value > 0 ? (currentCurrency === 'MYR' ? Math.round((totalPV * rank.value) / 6.5) : Math.round(totalPV * rank.value)) : 0;
     const now = new Date();
     const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
@@ -901,6 +983,7 @@ function buildSnapshotHTML() {
     } else {
         activeItems.forEach(item => {
             const qty = quantities[item.id];
+            const price = getPrice(item);
             rowsHTML += `
             <tr style="border-bottom:1px solid #f1f0fb;">
                 <td style="padding:14px 18px;">
@@ -909,7 +992,7 @@ function buildSnapshotHTML() {
                 </td>
                 <td style="padding:14px 10px;text-align:center;font-weight:900;font-size:18px;color:#1e1b2e;">×${qty}</td>
                 <td style="padding:14px 18px;text-align:right;">
-                    <div style="font-weight:900;font-size:17px;color:#e11d48;">$${(qty * item.price).toLocaleString()}</div>
+                    <div style="font-weight:900;font-size:17px;color:#e11d48;">${formatMoney(qty * price)}</div>
                     ${(!item.isFee && item.pv > 0) ? `<div style="font-size:13px;font-weight:800;color:#f59e0b;margin-top:2px;">${(qty * item.pv).toLocaleString()} PV</div>` : ''}
                 </td>
             </tr>`;
@@ -920,17 +1003,13 @@ function buildSnapshotHTML() {
             <tr style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;">
                 <td style="padding:10px 18px;color:#059669;font-weight:900;font-size:15px;" colspan="2">🎁 贈：${p.name} (買8送1)</td>
                 <td style="padding:10px 18px;text-align:right;color:#059669;font-weight:900;font-size:15px;">×${gq} FREE</td>
-            </tr>
-            <tr style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;">
-                <td style="padding:10px 18px;color:#059669;font-weight:900;font-size:15px;" colspan="2">🎁 加贈：麗穩康或麗穩膳 (隨機)</td>
-                <td style="padding:10px 18px;text-align:right;color:#059669;font-weight:900;font-size:15px;">×${gq} FREE</td>
             </tr>`;
         });
     }
 
     const promoHTML = promo ? `
     <div style="background:#fff1f2;border-top:2px solid #fecdd3;padding:16px 20px;">
-        <div style="color:#be123c;font-weight:900;font-size:15px;margin-bottom:5px;">🎁 17週年慶活動達標贈品</div>
+        <div style="color:#be123c;font-weight:900;font-size:15px;margin-bottom:5px;">🎁 2026 17週年慶活動達標贈品</div>
         <div style="color:#e11d48;font-weight:700;font-size:16px;">${promo.desc}</div>
     </div>` : '';
 
@@ -940,9 +1019,9 @@ function buildSnapshotHTML() {
             <div style="color:#7c3aed;font-weight:900;font-size:14px;margin-bottom:8px;">📊 業績獎金試算</div>
             <div style="display:flex;justify-content:space-between;align-items:center;">
                 <span style="font-size:15px;font-weight:700;color:#6b7280;">位階：<span style="color:#7c3aed;">${rank.label} (${Math.round(rank.value*100)}%)</span></span>
-                <span style="font-size:22px;font-weight:900;color:#7c3aed;">$${bonus.toLocaleString()}</span>
+                <span style="font-size:22px;font-weight:900;color:#7c3aed;">${formatMoney(bonus)}</span>
             </div>
-            <div style="font-size:13px;color:#a78bfa;margin-top:5px;">${totalPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% = $${bonus.toLocaleString()}</div>
+            <div style="font-size:13px;color:#a78bfa;margin-top:5px;">${currentCurrency === 'MYR' ? `${totalPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% ÷ 6.5 = ${formatMoney(bonus)}` : `${totalPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% = ${formatMoney(bonus)}`}</div>
         </div>
     </div>` : '';
 
@@ -962,7 +1041,7 @@ function buildSnapshotHTML() {
                 <div style="font-size:22px; font-weight:900; color:white; letter-spacing:0.02em;">訂單明細</div>
                 
                 <div style="position:absolute; right:0; font-size:12px; color:rgba(255,255,255,0.6); font-weight:700; letter-spacing:0.08em;">
-                    （17週年慶特惠版）
+                    （2026 17週年慶特惠版 - ${currentCurrency === 'MYR' ? '馬幣' : '台幣'}）
                 </div>
                 
             </div>
@@ -1001,7 +1080,7 @@ function buildSnapshotHTML() {
                 </div>
                 <div style="text-align:right;">
                     <div style="font-size:12px;color:#6b7280;font-weight:700;">總金額</div>
-                    <div style="font-size:28px;font-weight:900;color:#e11d48;">$${totalPrice.toLocaleString()}</div>
+                    <div style="font-size:28px;font-weight:900;color:#e11d48;">${formatMoney(totalPrice)}</div>
                 </div>
             </div>
         </div>
@@ -1099,9 +1178,10 @@ function generateFullOrderText() {
     let lines = [];
 
     lines.push('═════════════');
-    lines.push('  訂單明細（17週年慶特惠版）');
+    lines.push(`  訂單明細（2026 17週年慶特惠版 - ${currentCurrency === 'MYR' ? '馬幣' : '台幣'}）`);
     lines.push('═════════════');
     if (orderer) lines.push(`  訂購人：${orderer}`);
+    lines.push(`  幣別：${currentCurrency === 'MYR' ? '馬幣 (MYR)' : '新台幣 (TWD)'}`);
     
     const now = new Date();
     // 產生一致的時間格式：2026/03/01 18:50
@@ -1112,12 +1192,13 @@ function generateFullOrderText() {
 
     activeItems.forEach(item => {
         const qty = quantities[item.id] || 0;
-        const subtotal = item.price * qty;
+        const price = getPrice(item);
+        const subtotal = price * qty;
         totalPrice += subtotal;
         if (!item.isFee) { totalPV += item.pv * qty; prodQty += qty; }
         const alias = item.alias ? ` (${item.alias})` : '';
         lines.push(`▪ ${item.name}${alias}`);
-        lines.push(`  數量：x ${qty} ＝ $${subtotal.toLocaleString()}`);
+        lines.push(`  數量：x ${qty} ＝ ${formatMoney(subtotal)}`);
         if (!item.isFee && item.pv > 0) {
             lines.push(`  PV：${(item.pv * qty).toLocaleString()}`);
         }
@@ -1131,14 +1212,13 @@ function generateFullOrderText() {
         healthGifts.forEach(p => {
             const gq = Math.floor(quantities[p.id] / 8);
             lines.push(`  ${p.name} ×${gq}`);
-            lines.push(`  麗穩康或麗穩膳 (隨機) ×${gq}`);
         });
     }
 
     const promo = PROMOS.find(p => totalPV >= p.threshold);
     if (promo) {
         lines.push('─────────────');
-        lines.push('🎁 17週年慶活動達標贈品：');
+        lines.push('🎁 2026 17週年慶活動達標贈品：');
         lines.push(`  ${promo.desc}`);
     }
 
@@ -1146,17 +1226,17 @@ function generateFullOrderText() {
     lines.push(`  產品件數：${prodQty}`);
     lines.push(`  贈品件數：${calculateGiftQty(totalPV)}`);
     lines.push(`  總 PV 值：${totalPV.toLocaleString()}`);
-    lines.push(`  總 金 額：$${totalPrice.toLocaleString()}`);
+    lines.push(`  總 金 額：${formatMoney(totalPrice)}`);
 
     if (rank.value > 0) {
-        const bonus = Math.round(totalPV * rank.value);
+        const bonus = currentCurrency === 'MYR' ? Math.round((totalPV * rank.value) / 6.5) : Math.round(totalPV * rank.value);
         lines.push('─────────────');
         lines.push(`  位階：${rank.label} (${Math.round(rank.value*100)}%)`);
-        lines.push(`  業績獎金：$${bonus.toLocaleString()}`);
+        lines.push(`  業績獎金：${formatMoney(bonus)}`);
     }
 
     lines.push('═════════════');
-    lines.push('※天麗計算機 by 靜萱|甜甜團隊|秀玲顧問');
+    lines.push('※天麗計算機 by 靜萱|甜甜團隊★秀玲顧問');
     
     return lines.join('\n');
 }
@@ -1196,6 +1276,7 @@ async function uploadToSheet(fullText) {
 
     const payload = {
         timeStamp: currentOrderTime, // 【新增】傳送跟明細一模一樣的時間字串
+        currency: currentCurrency,
         orderer: orderer,
         rank: rank,
         totalPrice: document.getElementById('totalPrice')?.innerText || "$0",
