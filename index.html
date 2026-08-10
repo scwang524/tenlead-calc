@@ -301,7 +301,7 @@
                         <span class="text-slate-700">計算機</span>
                     </h1>
                     <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD BIOTECH</p>
-                    <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 甜甜團隊 ★ 秀玲顧問</p>
+                    <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 蔓蒂團隊 ★ 秀玲顧問</p>
                 </div>
 
                 <!-- 控制欄位區域（幣別獨立一排，訂購人與位階維持原樣並排） -->
@@ -346,9 +346,9 @@
                     <div style="background:var(--rose-light);border:1px solid #fecdd3;border-radius:14px;padding:10px 12px;">
                         <p style="color:#be123c;font-size:clamp(10px,2.8vw,12px);font-weight:900;margin-bottom:4px;">🎁【消費回饋 / 贈品方案】</p>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;">
-                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">1.9萬 PV：</span>2 (平衡柔膚露)</span>
-                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">3.2萬 PV：</span>2 (平衡柔膚露) + 9 (保濕修護霜)</span>
-                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;grid-column:span 2;"><span style="color:var(--text-1);">5.0萬 PV：</span>6A (亮白防護霜) + 9 (保濕修護霜) + 12 (煥采青春露)</span>
+                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">1.9萬 PV：</span>2號</span>
+                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">3.2萬 PV：</span>2號 + 9號</span>
+                            <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;grid-column:span 2;"><span style="color:var(--text-1);">5.0萬 PV：</span>6A + 9號 + 12號</span>
                             <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">10萬 PV：</span>2.1萬 天麗幣 (扭蛋抽獎券x1)</span>
                             <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">20萬 PV：</span>5.2萬 天麗幣 (扭蛋抽獎券x2)</span>
                         </div>
@@ -1274,6 +1274,13 @@ async function uploadToSheet(fullText) {
         return; 
     }
 
+    // 產生一目瞭然的簡短商品摘要（例如：深層潔膚油(A1) x1、雙效潔顏露(1) x2）
+    const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
+    const shortSummary = activeItems.map(i => `${i.name}${i.alias ? '(' + i.alias + ')' : ''} x${quantities[i.id]}`).join('、');
+
+    // 置於 details 首行，確保 Google Sheet 未開啟「自動換行」時也能直接預覽看到商品項目
+    const formattedDetails = shortSummary ? `【${shortSummary}】\n${fullText}` : fullText;
+
     const payload = {
         timeStamp: currentOrderTime, // 【新增】傳送跟明細一模一樣的時間字串
         currency: currentCurrency,
@@ -1283,7 +1290,8 @@ async function uploadToSheet(fullText) {
         totalPV: document.getElementById('totalPV')?.innerText || "0",
         deviceType: getDeviceType(),
         fingerprint: getDeviceFingerprint(),
-        details: fullText
+        details: formattedDetails,
+        summary: shortSummary
     };
 
     try {
