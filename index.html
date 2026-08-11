@@ -301,7 +301,7 @@
                         <span class="text-slate-700">計算機</span>
                     </h1>
                     <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD BIOTECH</p>
-                    <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 蔓蒂團隊 ★ 秀玲顧問</p>
+                    <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 蔓蒂團隊 ★ 秀玲/羽卉顧問</p>
                 </div>
 
                 <!-- 控制欄位區域（幣別獨立一排，訂購人與位階維持原樣並排） -->
@@ -476,6 +476,7 @@
                         <span style="font-size:clamp(11px,3vw,13px);font-weight:700;color:var(--text-2);">位階：<span id="modalRankName" style="color:var(--primary);font-weight:900;"></span></span>
                         <span style="font-size:clamp(16px,4.5vw,20px);font-weight:900;color:var(--primary);"><span id="modalBonusAmt">$0</span></span>
                     </div>
+                    <div id="modalPromotionTag" style="font-size:clamp(10px,2.8vw,12px);font-weight:900;color:#059669;background:#ecfdf5;border:1px solid #a7f3d0;padding:6px 10px;border-radius:10px;margin-top:6px;display:none;"></div>
                     <div style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-2);margin-top:4px;" id="modalBonusFormula"></div>
                 </div>
             </div>
@@ -674,6 +675,51 @@ function getRankInfo() {
     return { label: opt.text.split('(')[0].trim(), value: v };
 }
 
+function getBonusInfo(rank, pv) {
+    let bonus = 0;
+    let isEligible = false;
+    let isPromoted = false;
+    let rankText = '';
+    let shortRankText = '';
+    let formulaText = '';
+    let promoNoticeText = '';
+
+    if (rank.label === '新朋友') {
+        if (pv >= 28000) {
+            isEligible = true;
+            isPromoted = true;
+            const eligiblePV = pv - 28000;
+            bonus = currentCurrency === 'MYR' 
+                ? Math.round((eligiblePV * 0.25) / 6.5) 
+                : Math.round(eligiblePV * 0.25);
+            
+            rankText = `新朋友 (🎉 恭喜晉升「專員」)`;
+            shortRankText = `新朋友 ➔ 晉升專員 🎉`;
+            promoNoticeText = `🎉 本單滿 2.8萬 PV 達標，恭喜晉升「專員」資格！`;
+
+            if (pv > 28000) {
+                formulaText = currentCurrency === 'MYR'
+                    ? `計算式：（${pv.toLocaleString()} - 28,000）PV × 25% ÷ 6.5 = ${formatMoney(bonus)}`
+                    : `計算式：（${pv.toLocaleString()} - 28,000）PV × 25% = ${formatMoney(bonus)}`;
+            } else {
+                formulaText = `已滿 2.8萬 PV 達標晉升專員（本次業績獎金 ${formatMoney(0)}）`;
+            }
+        }
+    } else if (rank.value > 0) {
+        isEligible = true;
+        bonus = currentCurrency === 'MYR' 
+            ? Math.round((pv * rank.value) / 6.5) 
+            : Math.round(pv * rank.value);
+        rankText = `${rank.label} (${Math.round(rank.value * 100)}%)`;
+        shortRankText = `${rank.label} × ${Math.round(rank.value * 100)}%`;
+        formulaText = currentCurrency === 'MYR'
+            ? `計算式：${pv.toLocaleString()} PV × ${Math.round(rank.value * 100)}% ÷ 6.5 = ${formatMoney(bonus)}`
+            : `計算式：${pv.toLocaleString()} PV × ${Math.round(rank.value * 100)}% = ${formatMoney(bonus)}`;
+    }
+
+    return { bonus, isEligible, isPromoted, rankText, shortRankText, formulaText, promoNoticeText };
+}
+
 function calculateGiftQty(pv) {
     let giftCount = 0;
     const activePromo = PROMOS.find(p => pv >= p.threshold);
@@ -816,12 +862,12 @@ function updateTotals() {
     noticeEl.innerText = activePromo ? `🎁 已達標：${activePromo.desc}` : '';
 
     const rank = getRankInfo();
-    const bonus = currentCurrency === 'MYR' ? Math.round((pv * rank.value) / 6.5) : Math.round(pv * rank.value);
+    const bInfo = getBonusInfo(rank, pv);
     const bonusWrap = document.getElementById('bonusWrap');
-    if (rank.value > 0) {
+    if (bInfo.isEligible) {
         bonusWrap.style.cssText = 'border-left:1.5px solid var(--border);padding-left:10px;display:flex !important;flex-direction:column;';
-        document.getElementById('totalBonus').innerText = formatMoney(bonus);
-        document.getElementById('bonusRankLabel').innerText = `${rank.label} × ${Math.round(rank.value * 100)}%`;
+        document.getElementById('totalBonus').innerText = formatMoney(bInfo.bonus);
+        document.getElementById('bonusRankLabel').innerText = bInfo.shortRankText;
     } else {
         bonusWrap.style.cssText = 'display:none !important;';
     }
@@ -905,14 +951,22 @@ function toggleSummary(show) {
             });
 
             const bonusSec = document.getElementById('modalBonusSection');
-            if (rank.value > 0) {
-                const bonus = currentCurrency === 'MYR' ? Math.round((currentPV * rank.value) / 6.5) : Math.round(currentPV * rank.value);
+            const bInfo = getBonusInfo(rank, currentPV);
+            if (bInfo.isEligible) {
                 bonusSec.classList.remove('hidden');
-                document.getElementById('modalRankName').innerText = `${rank.label} (${Math.round(rank.value*100)}%)`;
-                document.getElementById('modalBonusAmt').innerText = formatMoney(bonus);
-                document.getElementById('modalBonusFormula').innerText = currentCurrency === 'MYR'
-                    ? `計算式：${currentPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% ÷ 6.5 = ${formatMoney(bonus)}`
-                    : `計算式：${currentPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% = ${formatMoney(bonus)}`;
+                document.getElementById('modalRankName').innerText = bInfo.rankText;
+                document.getElementById('modalBonusAmt').innerText = formatMoney(bInfo.bonus);
+                document.getElementById('modalBonusFormula').innerText = bInfo.formulaText;
+
+                const promoTag = document.getElementById('modalPromotionTag');
+                if (promoTag) {
+                    if (bInfo.promoNoticeText) {
+                        promoTag.style.display = 'block';
+                        promoTag.innerText = bInfo.promoNoticeText;
+                    } else {
+                        promoTag.style.display = 'none';
+                    }
+                }
             } else {
                 bonusSec.classList.add('hidden');
             }
@@ -973,7 +1027,7 @@ function buildSnapshotHTML() {
     });
     const promo = PROMOS.find(p => totalPV >= p.threshold);
     const giftQty = calculateGiftQty(totalPV);
-    const bonus = rank.value > 0 ? (currentCurrency === 'MYR' ? Math.round((totalPV * rank.value) / 6.5) : Math.round(totalPV * rank.value)) : 0;
+    const bInfo = getBonusInfo(rank, totalPV);
     const now = new Date();
     const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
@@ -1013,15 +1067,21 @@ function buildSnapshotHTML() {
         <div style="color:#e11d48;font-weight:700;font-size:16px;">${promo.desc}</div>
     </div>` : '';
 
-    const bonusHTML = rank.value > 0 ? `
+    const promotionBadgeHTML = bInfo.promoNoticeText ? `
+    <div style="font-size:12px;font-weight:900;color:#059669;background:#ecfdf5;border:1px solid #a7f3d0;padding:5px 10px;border-radius:8px;margin-top:6px;">
+        ${bInfo.promoNoticeText}
+    </div>` : '';
+
+    const bonusHTML = bInfo.isEligible ? `
     <div style="padding:16px 20px;border-top:1px solid #e5e0f5;background:linear-gradient(135deg,rgba(124,58,237,0.04),rgba(168,85,247,0.02));">
         <div style="border:1.5px solid rgba(124,58,237,0.2);border-radius:14px;padding:14px 18px;background:rgba(124,58,237,0.04);">
             <div style="color:#7c3aed;font-weight:900;font-size:14px;margin-bottom:8px;">📊 業績獎金試算</div>
             <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-size:15px;font-weight:700;color:#6b7280;">位階：<span style="color:#7c3aed;">${rank.label} (${Math.round(rank.value*100)}%)</span></span>
-                <span style="font-size:22px;font-weight:900;color:#7c3aed;">${formatMoney(bonus)}</span>
+                <span style="font-size:15px;font-weight:700;color:#6b7280;">位階：<span style="color:#7c3aed;">${bInfo.rankText}</span></span>
+                <span style="font-size:22px;font-weight:900;color:#7c3aed;">${formatMoney(bInfo.bonus)}</span>
             </div>
-            <div style="font-size:13px;color:#a78bfa;margin-top:5px;">${currentCurrency === 'MYR' ? `${totalPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% ÷ 6.5 = ${formatMoney(bonus)}` : `${totalPV.toLocaleString()} PV × ${Math.round(rank.value*100)}% = ${formatMoney(bonus)}`}</div>
+            ${promotionBadgeHTML}
+            <div style="font-size:13px;color:#a78bfa;margin-top:5px;">${bInfo.formulaText}</div>
         </div>
     </div>` : '';
 
@@ -1087,7 +1147,7 @@ function buildSnapshotHTML() {
 
         <!-- Watermark -->
         <div style="background:#1e1b2e;padding:8px 18px;text-align:center;">
-            <span style="font-size:12px;color:rgba(255,255,255,1);font-weight:700;letter-spacing:0.15em;">※天麗計算機 by 靜萱|蔓蒂團隊★秀玲顧問</span>
+            <span style="font-size:12px;color:rgba(255,255,255,1);font-weight:700;letter-spacing:0.15em;">※天麗計算機 by 靜萱|蔓蒂團隊★秀玲/羽卉顧問</span>
         </div>
     </div>`;
 }
@@ -1228,15 +1288,18 @@ function generateFullOrderText() {
     lines.push(`  總 PV 值：${totalPV.toLocaleString()}`);
     lines.push(`  總 金 額：${formatMoney(totalPrice)}`);
 
-    if (rank.value > 0) {
-        const bonus = currentCurrency === 'MYR' ? Math.round((totalPV * rank.value) / 6.5) : Math.round(totalPV * rank.value);
+    const bInfo = getBonusInfo(rank, totalPV);
+    if (bInfo.isEligible) {
         lines.push('─────────────');
-        lines.push(`  位階：${rank.label} (${Math.round(rank.value*100)}%)`);
-        lines.push(`  業績獎金：${formatMoney(bonus)}`);
+        lines.push(`  位階：${bInfo.rankText}`);
+        if (bInfo.promoNoticeText) {
+            lines.push(`  晉升：${bInfo.promoNoticeText}`);
+        }
+        lines.push(`  業績獎金：${formatMoney(bInfo.bonus)}`);
     }
 
     lines.push('═════════════');
-    lines.push('※天麗計算機 by 靜萱|蔓蒂團隊★秀玲顧問');
+    lines.push('※天麗計算機 by 靜萱|蔓蒂團隊★秀玲/羽卉顧問');
     
     return lines.join('\n');
 }
