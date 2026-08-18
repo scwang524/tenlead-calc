@@ -284,7 +284,88 @@
             margin: 0 12px 24px;
             display: block;
         }
-    </style>
+    
+        /* Quote Marquee */
+        .quote-marquee-container {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.08), rgba(124, 58, 237, 0.06), rgba(245, 158, 11, 0.08));
+            border: 1.5px solid rgba(245, 158, 11, 0.25);
+            border-radius: 999px;
+            padding: 3px 8px;
+            overflow: hidden;
+            height: 28px;
+            max-width: 100%;
+        }
+        .quote-marquee-container:hover .quote-marquee-content {
+            animation-play-state: paused;
+        }
+        .quote-marquee-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 7px;
+            border-radius: 999px;
+            flex-shrink: 0;
+            margin-right: 6px;
+            box-shadow: 0 1px 4px rgba(245, 158, 11, 0.25);
+        }
+        .quote-marquee-track {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        .quote-marquee-content {
+            display: inline-block;
+            padding-left: 100%;
+            font-size: 11px;
+            font-weight: 800;
+            color: #b45309;
+            white-space: nowrap;
+            will-change: transform;
+            animation: quoteScroll 11s linear infinite;
+        }
+        @keyframes quoteScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Feedback Box & Flash */
+        .feedback-box {
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+        .feedback-box:focus {
+            border-color: var(--primary) !important;
+            background: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        }
+        .feedback-box::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        @keyframes flashBorder {
+            0%, 100% {
+                border-color: var(--border);
+                box-shadow: none;
+            }
+            25%, 75% {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.4);
+            }
+            50% {
+                border-color: #10b981;
+                box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.5);
+            }
+        }
+        .feedback-flash {
+            animation: flashBorder 0.8s ease-in-out;
+        }
+</style>
 </head>
 <body style="padding-bottom: calc(130px + env(safe-area-inset-bottom));">
 
@@ -302,6 +383,16 @@
                     </h1>
                     <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD BIOTECH</p>
                     <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 蔓蒂團隊 ★ 秀玲顧問</p>
+                    <!-- 天麗語錄 跑馬燈 -->
+                    <div class="quote-marquee-container mt-2">
+                        <div class="quote-marquee-badge">
+                            <i data-lucide="sparkles" class="w-3 h-3 text-white shrink-0"></i>
+                            <span>天麗．語錄</span>
+                        </div>
+                        <div class="quote-marquee-track">
+                            <span id="quoteMarqueeText" class="quote-marquee-content"></span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 控制欄位區域（幣別獨立一排，訂購人與位階維持原樣並排） -->
@@ -1216,7 +1307,7 @@ window.captureAndShare = async function() {
     }
 };
 
-document.addEventListener('DOMContentLoaded', renderTable);
+document.addEventListener('DOMContentLoaded', () => { renderTable(); initQuoteMarquee(); });
 
 // 【新增】統一明細產生器：確保複製與截圖的內容 100% 一致
 function generateFullOrderText() {
@@ -1335,16 +1426,16 @@ async function uploadToSheet(fullText) {
     const formattedDetails = shortSummary ? `【${shortSummary}】\n${fullText}` : fullText;
 
     const payload = {
-        timeStamp: currentOrderTime, // 【新增】傳送跟明細一模一樣的時間字串
-        currency: currentCurrency,
-        orderer: orderer,
-        rank: rank,
-        totalPrice: document.getElementById('totalPrice')?.innerText || "$0",
-        totalPV: document.getElementById('totalPV')?.innerText || "0",
-        deviceType: getDeviceType(),
-        fingerprint: getDeviceFingerprint(),
-        details: formattedDetails,
-        summary: shortSummary
+        sheetName: '總表',
+        type: 'order',
+        timeStamp: currentOrderTime, // 訂購時間
+        orderer: orderer || '',      // 訂購人（未填寫則留空）
+        rank: rank,                  // 位階
+        totalPrice: document.getElementById('totalPrice')?.innerText || "$0", // 總金額
+        totalPV: document.getElementById('totalPV')?.innerText || "0",       // 總PV值
+        deviceType: getDeviceType(), // 裝置
+        fingerprint: getDeviceFingerprint(), // 硬體ID
+        details: formattedDetails    // 訂單明細
     };
 
     try {
@@ -1358,15 +1449,144 @@ async function uploadToSheet(fullText) {
         
         // 儲存這次的 DataKey
         window.lastDataKey = dataKey; 
-        console.log("新訂單已同步");
+        console.log("新訂單已同步至「總表」");
     } catch (error) {
         console.error("上傳失敗", error);
     }
 }
 
+
+// 天麗語錄清單
+const TENLEAD_QUOTES = [
+    "多一人 美麗、少一人 憂鬱。",
+    "認真使用、熱情分享。",
+    "我要 健康 + 美麗 + 財富 = 三財一生。",
+    "用天麗～ 你最美！",
+    "斜桿事業、人生的第二春。",
+    "保養、首重清潔。",
+    "早用、早美麗。",
+    "配合度、就是滿意度。",
+    "我們在一起，就是了不起！",
+    "要 定期調單 喔。",
+    "一分鐘 防曬、剩過 24小時美白。"
+];
+
+let lastQuoteIndex = -1;
+function getRandomQuote() {
+    let index;
+    do {
+        index = Math.floor(Math.random() * TENLEAD_QUOTES.length);
+    } while (index === lastQuoteIndex && TENLEAD_QUOTES.length > 1);
+    lastQuoteIndex = index;
+    return TENLEAD_QUOTES[index];
+}
+
+function initQuoteMarquee() {
+    const el = document.getElementById('quoteMarqueeText');
+    if (!el) return;
+    el.innerText = getRandomQuote();
+    el.addEventListener('animationiteration', () => {
+        el.innerText = getRandomQuote();
+    });
+}
+
+// 意見回饋功能
+window.clearFeedback = function() {
+    const el = document.getElementById('feedbackInput');
+    if (el) {
+        el.value = '';
+    }
+};
+
+window.submitFeedback = function() {
+    const el = document.getElementById('feedbackInput');
+    if (!el) return;
+    const content = el.value.trim();
+    if (!content) {
+        showMessage('請輸入您的寶貴意見或鼓勵！');
+        el.focus();
+        return;
+    }
+
+    // 邊框閃爍效果
+    el.classList.remove('feedback-flash');
+    void el.offsetWidth; // 觸發重繪
+    el.classList.add('feedback-flash');
+
+    // 傳送意見至 Google Sheets
+    uploadFeedbackToSheet(content);
+
+    // 提示已傳送通知
+    showMessage('✅ 已傳送！感謝您的寶貴意見');
+
+    // 清除文字框
+    setTimeout(() => {
+        el.value = '';
+        el.classList.remove('feedback-flash');
+    }, 600);
+};
+
+async function uploadFeedbackToSheet(feedbackText) {
+    const now = new Date();
+    const timeStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+    const payload = {
+        sheetName: '意見回饋',
+        type: 'feedback',
+        timeStamp: timeStr,           // 時間
+        user: getOrderer() || '',     // 使用人（未填寫則留空）
+        orderer: getOrderer() || '',
+        content: feedbackText,        // 內容
+        feedback: feedbackText,
+        deviceType: getDeviceType(),  // 裝置
+        fingerprint: getDeviceFingerprint() // 硬體ID
+    };
+
+    try {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        console.log("意見回饋已傳送至「意見回饋」頁籤");
+    } catch (error) {
+        console.error("意見傳送失敗", error);
+    }
+}
 </script>
 
 <footer class="max-w-2xl mx-auto px-4 pb-32 pt-10">
+    <!-- 意見回饋 -->
+    <div class="card p-4 mb-6" style="background:var(--surface);">
+        <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:var(--primary-light);color:var(--primary);">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                </div>
+                <h3 style="font-size:clamp(13px,3.5vw,15px);font-weight:900;color:var(--text-1);">意見回饋</h3>
+            </div>
+            <span style="font-size:11px;font-weight:700;color:var(--text-2);">歡迎交流</span>
+        </div>
+        <textarea id="feedbackInput" rows="3"
+            placeholder="任何鼓勵或改善意見，都歡迎留言！"
+            class="feedback-box w-full p-3 rounded-xl outline-none resize-none transition-all duration-200"
+            style="border:1.5px solid var(--border);background:var(--surface-3);font-size:clamp(12px,3.2vw,14px);font-weight:600;color:var(--text-1);"></textarea>
+        <div class="flex justify-end gap-2 mt-2.5">
+            <button type="button" onclick="clearFeedback()"
+                class="px-4 py-2 rounded-xl font-bold transition-all active:scale-95 flex items-center gap-1.5"
+                style="background:var(--surface-3);border:1.5px solid var(--border);color:var(--text-2);font-size:clamp(11px,3vw,13px);">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 清除
+            </button>
+            <button type="button" onclick="submitFeedback()"
+                class="px-5 py-2 rounded-xl font-bold text-white transition-all active:scale-95 flex items-center gap-1.5"
+                style="background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 2px 10px rgba(124,58,237,0.3);font-size:clamp(11px,3vw,13px);">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> 送出
+            </button>
+        </div>
+    </div>
+
     <div style="border-top: 1px solid var(--border); padding-top: 15px;">
         <details class="group">
             <summary class="flex items-center justify-between cursor-pointer list-none opacity-60 hover:opacity-100 transition-opacity">
