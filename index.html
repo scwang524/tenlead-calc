@@ -285,17 +285,18 @@
             display: block;
         }
     
-        /* Quote Marquee */
+        /* Quote Marquee - Qixi Valentine Edition */
         .quote-marquee-container {
             display: flex;
             align-items: center;
-            background: linear-gradient(90deg, rgba(245, 158, 11, 0.08), rgba(124, 58, 237, 0.06), rgba(245, 158, 11, 0.08));
-            border: 1.5px solid rgba(245, 158, 11, 0.25);
+            background: linear-gradient(90deg, rgba(244, 63, 94, 0.12), rgba(236, 72, 153, 0.08), rgba(168, 85, 247, 0.1), rgba(244, 63, 94, 0.12));
+            border: 1.5px solid rgba(244, 63, 94, 0.35);
             border-radius: 999px;
             padding: 3px 8px;
             overflow: hidden;
             height: 28px;
             max-width: 100%;
+            box-shadow: 0 2px 10px rgba(244, 63, 94, 0.15);
         }
         .quote-marquee-container:hover .quote-marquee-content {
             animation-play-state: paused;
@@ -304,15 +305,15 @@
             display: inline-flex;
             align-items: center;
             gap: 3px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #be185d 100%);
             color: white;
             font-size: 10px;
             font-weight: 900;
-            padding: 2px 7px;
+            padding: 2px 8px;
             border-radius: 999px;
             flex-shrink: 0;
             margin-right: 6px;
-            box-shadow: 0 1px 4px rgba(245, 158, 11, 0.25);
+            box-shadow: 0 2px 8px rgba(244, 63, 94, 0.35);
         }
         .quote-marquee-track {
             flex: 1;
@@ -325,10 +326,15 @@
             padding-left: 100%;
             font-size: 11px;
             font-weight: 800;
-            color: #b45309;
+            color: #be123c;
             white-space: nowrap;
             will-change: transform;
-            animation: quoteScroll 11s linear infinite;
+            animation: quoteScroll 12s linear infinite;
+        }
+        .quote-marquee-content .highlight-name {
+            color: #ec4899;
+            font-weight: 900;
+            text-shadow: 0 1px 3px rgba(236, 72, 153, 0.3);
         }
         @keyframes quoteScroll {
             0% { transform: translateX(0); }
@@ -389,11 +395,11 @@
                 </h1>
                 <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD BIOTECH</p>
                 <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 蔓蒂團隊 ★ 秀玲顧問</p>
-                <!-- 天麗語錄 跑馬燈 -->
+                <!-- 七夕情人節 祝福跑馬燈 -->
                 <div class="quote-marquee-container mt-2">
                     <div class="quote-marquee-badge">
-                        <i data-lucide="sparkles" class="w-3 h-3 text-white shrink-0"></i>
-                        <span>天麗語錄</span>
+                        <i data-lucide="heart" class="w-3 h-3 text-white fill-current shrink-0"></i>
+                        <span>七夕特獻</span>
                     </div>
                     <div class="quote-marquee-track">
                         <span id="quoteMarqueeText" class="quote-marquee-content"></span>
@@ -1456,19 +1462,18 @@ async function uploadToSheet(fullText) {
 }
 
 
-// 天麗語錄清單
+// 七夕情人節・天麗語錄清單（每句均含專屬祝福，人名採富貴吉利金，避免紅字）
 const TENLEAD_QUOTES = [
-    "多一人 美麗、少一人 憂鬱。",
-    "認真使用、熱情分享。",
-    "我要 健康 + 美麗 + 財富 = 三財一生。",
-    "用天麗～ 你最美！",
-    "斜桿事業、人生的第二春。",
-    "保養、首重清潔。",
-    "早用、早美麗。",
-    "配合度、就是滿意度。",
-    "我們在一起，就是了不起！",
-    "要 定期調單 喔。",
-    "一分鐘 防曬、剩過 24小時美白。"
+    "💖 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！甜蜜相伴每一天 🌹",
+    "✨ 多一人美麗、少一人憂鬱～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！💕",
+    "🌌 迢迢牽牛星，皎皎河漢女～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！🌟",
+    "💫 我要 健康 + 美麗 + 財富 = 三財一生！祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！💐",
+    "🌸 用天麗你最美，越用越自信～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！💖",
+    "💑 執子之手與子偕老～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！幸福圓滿 🌹",
+    "🌟 我們在一起就是了不起！祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！🎉",
+    "✨ 認真保養、深情相伴～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！愛意滿滿 💕",
+    "🌹 早用早美麗、容光煥發～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！💖",
+    "💎 浪漫七夕・星月相映～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！幸福每一刻 🌸"
 ];
 
 let lastQuoteIndex = -1;
@@ -1484,9 +1489,10 @@ function getRandomQuote() {
 function initQuoteMarquee() {
     const el = document.getElementById('quoteMarqueeText');
     if (!el) return;
-    el.innerText = getRandomQuote();
+    el.innerHTML = TENLEAD_QUOTES[0];
+    lastQuoteIndex = 0;
     el.addEventListener('animationiteration', () => {
-        el.innerText = getRandomQuote();
+        el.innerHTML = getRandomQuote();
     });
 }
 
