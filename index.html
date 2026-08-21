@@ -1635,24 +1635,47 @@ function formatDisplayTime(str) {
 }
 
 function applyFeedbackVisibility(settings) {
-    let isFeedbackEnabled = true;
+    let isInputEnabled = true;     // 意見回饋輸入框（預設開啟）
+    let isCommentsEnabled = true;  // 留言區歷史清單（預設開啟）
+
     if (settings && typeof settings === 'object') {
         for (const k in settings) {
-            if (k.includes('留言') || k.includes('意見') || k.toLowerCase().includes('feedback')) {
-                const val = String(settings[k]).toLowerCase().trim();
-                if (['關閉', '隱藏', '停用', 'false', '0', 'n', 'no', 'off', '不顯示', 'x'].includes(val)) {
-                    isFeedbackEnabled = false;
-                } else if (['開啟', '顯示', '啟用', 'true', '1', 'y', 'yes', 'on', 'v'].includes(val)) {
-                    isFeedbackEnabled = true;
-                }
+            const key = String(k).toLowerCase().trim();
+            const val = String(settings[k]).toLowerCase().trim();
+            const isOff = ['關閉', '隱藏', '停用', 'false', '0', 'n', 'no', 'off', '不顯示', 'x'].includes(val);
+            const isOn = ['開啟', '顯示', '啟用', 'true', '1', 'y', 'yes', 'on', 'v'].includes(val);
+
+            // 1. 意見回饋開關
+            if (key.includes('意見') || key.includes('回饋') || key === 'feedback') {
+                if (isOff) isInputEnabled = false;
+                else if (isOn) isInputEnabled = true;
+            }
+            // 2. 留言區開關
+            if (key.includes('留言') || key === 'comments' || key === 'comment') {
+                if (isOff) isCommentsEnabled = false;
+                else if (isOn) isCommentsEnabled = true;
             }
         }
     }
+
+    // 控制「意見回饋輸入框」卡片
+    const inputCard = document.getElementById('feedbackInputCard');
+    if (inputCard) {
+        if (isInputEnabled) {
+            inputCard.classList.remove('hidden');
+            inputCard.style.display = 'block';
+        } else {
+            inputCard.classList.add('hidden');
+            inputCard.style.display = 'none';
+        }
+    }
+
+    // 控制「留言區歷史列表」卡片
     const commentCard = document.getElementById('commentDisplayCard');
     if (commentCard) {
-        if (isFeedbackEnabled) {
+        if (isCommentsEnabled) {
             commentCard.classList.remove('hidden');
-            commentCard.style.display = '';
+            commentCard.style.display = 'block';
         } else {
             commentCard.classList.add('hidden');
             commentCard.style.display = 'none';
@@ -2492,8 +2515,8 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
 </script>
 
 <footer class="max-w-2xl mx-auto px-4 pb-32 pt-10">
-    <!-- 意見回饋（永遠保留顯示，使用者隨時可填寫並送出） -->
-    <div class="card p-4 mb-6" style="background:var(--surface);">
+    <!-- 意見回饋（由 Google Sheet「設定」中的「意見回饋」狀態控制是否顯示在網頁上） -->
+    <div id="feedbackInputCard" class="card p-4 mb-6 hidden" style="background:var(--surface);display:none;">
         <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
                 <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:var(--primary-light);color:var(--primary);">
