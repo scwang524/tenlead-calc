@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>2026 天麗生技 17週年慶特惠</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -2526,7 +2529,7 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
     </div>
 
     <!-- 留言區（歷史留言清單：由 Google Sheet「設定」中的「留言區」狀態控制是否顯示在網頁上） -->
-    <div id="commentDisplayCard" class="card p-4 mb-6" style="background:var(--surface);">
+    <div id="commentDisplayCard" class="card p-4 mb-6 hidden" style="background:var(--surface);display:none;">
         <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
                 <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(245, 158, 11, 0.15));color:var(--primary);">
