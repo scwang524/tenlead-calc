@@ -1712,7 +1712,7 @@ async function loadFeedbackMessages(showToast = false) {
                         })
                         .map(item => ({
                             time: formatDisplayTime(item.time || item.timeStamp || item['時間'] || item.Timestamp || ''),
-                            user: item.user || item.orderer || item['使用人'] || item['留言人'] || item.User || '（匿名夥伴）',
+                            user: item.user || item.orderer || item['使用人'] || item['留言人'] || item.User || '（匿名）',
                             content: item.content || item.feedback || item['內容'] || item['意見回饋'] || item.Content || '',
                             reply: item.reply || item['回覆'] || item['回覆內容'] || item.Reply || '',
                             replyUser: item.replyUser || item['回覆人'] || item.reply_user || '',
@@ -1766,7 +1766,7 @@ function parseRepliesList(item) {
         }
         matches.push({
             time: formatDisplayTime(match[1].trim()),
-            user: user || '（匿名夥伴）',
+            user: user || '（匿名）',
             fingerprint: fp,
             content: match[3].trim().replace(/\n*---+\n*$/, '').trim()
         });
@@ -1775,7 +1775,7 @@ function parseRepliesList(item) {
 
     // 單筆舊格式或純文字回覆
     let u = item.replyUser || item['回覆人'] || item.reply_user || '';
-    if (!u || u.trim() === '' || u === '匿名夥伴') u = '（匿名夥伴）';
+    if (!u || u.trim() === '' || u === '匿名夥伴') u = '（匿名）';
     return [{
         time: formatDisplayTime(item.replyTime || item['回覆時間'] || item.reply_time || ''),
         user: u.trim(),
@@ -1829,7 +1829,7 @@ function renderFeedbackMessages() {
         
         let userName = item.user || item.orderer || item['使用人'] || item['留言人'] || '';
         if (!userName || userName.trim() === '' || userName === '匿名夥伴') {
-            userName = '（匿名夥伴）';
+            userName = '（匿名）';
         } else {
             userName = userName.trim();
         }
@@ -1895,7 +1895,7 @@ function renderFeedbackMessages() {
                             <div class="flex items-center justify-between gap-2 mb-1">
                                 <div class="flex items-center gap-1.5 flex-wrap">
                                     <span class="text-[10px] font-black px-1.5 py-0.5 rounded flex items-center gap-1" style="background:var(--primary-light);color:var(--primary);">
-                                        ★ ${r.user || '（匿名夥伴）'} 回覆
+                                        ★ ${r.user || '（匿名）'} 回覆
                                     </span>
                                     ${isMyReply ? `<span class="text-[9px] font-bold px-1.5 py-0.2 rounded" style="background:var(--primary-light);color:var(--primary);">我的回覆</span>` : ''}
                                 </div>
@@ -2345,7 +2345,7 @@ window.submitCommentReply = async function(itemTime, safeId) {
 
     let replyUser = userInput ? userInput.value.trim() : '';
     if (!replyUser) {
-        replyUser = '（匿名夥伴）';
+        replyUser = '（匿名）';
     }
 
     const replyTimeStr = getTaipeiTimeString();
@@ -2443,7 +2443,7 @@ window.submitFeedback = function() {
 
     let userStr = userEl ? userEl.value.trim() : '';
     if (!userStr) {
-        userStr = '（匿名夥伴）';
+        userStr = '（匿名）';
     }
 
     el.classList.remove('feedback-flash');
@@ -2480,7 +2480,7 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
     if (!timeStr) {
         timeStr = getTaipeiTimeString();
     }
-    if (!userStr) userStr = '（匿名夥伴）';
+    if (!userStr) userStr = '（匿名）';
 
     const fp = getDeviceFingerprint();
 
