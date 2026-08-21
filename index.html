@@ -285,18 +285,19 @@
             display: block;
         }
     
-        /* Quote Marquee - Qixi Valentine Edition */
+        /* Quote Marquee - 天麗語錄 */
         .quote-marquee-container {
             display: flex;
             align-items: center;
-            background: linear-gradient(90deg, rgba(244, 63, 94, 0.12), rgba(236, 72, 153, 0.08), rgba(168, 85, 247, 0.1), rgba(244, 63, 94, 0.12));
-            border: 1.5px solid rgba(244, 63, 94, 0.35);
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.08), rgba(245, 158, 11, 0.06), rgba(124, 58, 237, 0.08));
+            border: 1.5px solid rgba(124, 58, 237, 0.25);
             border-radius: 999px;
             padding: 3px 8px;
             overflow: hidden;
-            height: 28px;
+            height: 30px;
             max-width: 100%;
-            box-shadow: 0 2px 10px rgba(244, 63, 94, 0.15);
+            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.08);
+            cursor: default;
         }
         .quote-marquee-container:hover .quote-marquee-content {
             animation-play-state: paused;
@@ -304,37 +305,46 @@
         .quote-marquee-badge {
             display: inline-flex;
             align-items: center;
-            gap: 3px;
-            background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #be185d 100%);
+            justify-content: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #f59e0b 100%);
             color: white;
-            font-size: 10px;
+            font-size: 10.5px;
             font-weight: 900;
             padding: 2px 8px;
+            height: 22px;
             border-radius: 999px;
             flex-shrink: 0;
-            margin-right: 6px;
-            box-shadow: 0 2px 8px rgba(244, 63, 94, 0.35);
+            margin-right: 8px;
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+            line-height: 1;
         }
         .quote-marquee-track {
             flex: 1;
             overflow: hidden;
             white-space: nowrap;
             position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
         }
         .quote-marquee-content {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            height: 100%;
+            line-height: 1;
             padding-left: 100%;
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 800;
-            color: #be123c;
+            color: #6d28d9;
             white-space: nowrap;
             will-change: transform;
-            animation: quoteScroll 12s linear infinite;
+            animation: quoteScroll 8.5s linear infinite;
         }
         .quote-marquee-content .highlight-name {
-            color: #ec4899;
+            color: #d97706;
             font-weight: 900;
-            text-shadow: 0 1px 3px rgba(236, 72, 153, 0.3);
+            text-shadow: 0 1px 2px rgba(217, 119, 6, 0.2);
         }
         @keyframes quoteScroll {
             0% { transform: translateX(0); }
@@ -395,11 +405,11 @@
                 </h1>
                 <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD BIOTECH</p>
                 <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 蔓蒂團隊 ★ 秀玲顧問</p>
-                <!-- 七夕情人節 祝福跑馬燈 -->
+                <!-- 天麗語錄 跑馬燈 -->
                 <div class="quote-marquee-container mt-2">
                     <div class="quote-marquee-badge">
-                        <i data-lucide="heart" class="w-3 h-3 text-white fill-current shrink-0"></i>
-                        <span>七夕特獻</span>
+                        <i data-lucide="sparkles" class="w-3 h-3 text-white shrink-0"></i>
+                        <span>天麗語錄</span>
                     </div>
                     <div class="quote-marquee-track">
                         <span id="quoteMarqueeText" class="quote-marquee-content"></span>
@@ -481,12 +491,47 @@
             <div style="width:100px;flex-shrink:0;text-align:center;color:var(--text-2);" class="label-font">數量</div>
             <div style="width:86px;flex-shrink:0;text-align:right;color:var(--text-2);" class="label-font">小計</div>
         </div>
-        <div style="background:#e7bfea;border-bottom:1px solid var(--border);padding:6px 14px;" class="section-label">保養品</div>
-        <div id="skincareContainer" class="divide-y" style="--tw-divide-color:var(--border);"></div>
-        <div style="background:#bff0ba;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 14px;" class="section-label">保健品</div>
-        <div id="healthContainer" class="divide-y" style="--tw-divide-color:var(--border);"></div>
-        <div style="background:#dae3bd;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 14px;" class="section-label">會費</div>
-        <div id="feeContainer" class="divide-y" style="--tw-divide-color:var(--border);"></div>
+        <!-- 保養品區塊 -->
+        <div onclick="toggleSection('skincare')"
+            style="background:#e7bfea;border-bottom:1px solid var(--border);padding:7px 14px;cursor:pointer;user-select:none;"
+            class="section-label flex items-center justify-between transition-all hover:brightness-95 active:scale-[0.995]">
+            <div class="flex items-center gap-2">
+                <span>保養品</span>
+                <span id="skincareBadge" class="hidden text-[10px] font-black px-2 py-0.5 rounded-full text-white" style="background:#7c3aed;">0 件</span>
+            </div>
+            <div class="flex items-center gap-1 text-[11px] font-bold text-purple-900">
+                <i data-lucide="chevron-down" id="skincareChevron" class="w-4 h-4 transition-transform duration-200" style="transform:rotate(0deg);"></i>
+            </div>
+        </div>
+        <div id="skincareContainer" class="divide-y transition-all" style="--tw-divide-color:var(--border);"></div>
+
+        <!-- 保健品區塊 -->
+        <div onclick="toggleSection('health')"
+            style="background:#bff0ba;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:7px 14px;cursor:pointer;user-select:none;"
+            class="section-label flex items-center justify-between transition-all hover:brightness-95 active:scale-[0.995]">
+            <div class="flex items-center gap-2">
+                <span>保健品</span>
+                <span id="healthBadge" class="hidden text-[10px] font-black px-2 py-0.5 rounded-full text-white" style="background:#15803d;">0 件</span>
+            </div>
+            <div class="flex items-center gap-1 text-[11px] font-bold text-green-900">
+                <i data-lucide="chevron-down" id="healthChevron" class="w-4 h-4 transition-transform duration-200" style="transform:rotate(0deg);"></i>
+            </div>
+        </div>
+        <div id="healthContainer" class="divide-y transition-all" style="--tw-divide-color:var(--border);"></div>
+
+        <!-- 會費區塊 -->
+        <div onclick="toggleSection('fee')"
+            style="background:#dae3bd;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:7px 14px;cursor:pointer;user-select:none;"
+            class="section-label flex items-center justify-between transition-all hover:brightness-95 active:scale-[0.995]">
+            <div class="flex items-center gap-2">
+                <span>會費</span>
+                <span id="feeBadge" class="hidden text-[10px] font-black px-2 py-0.5 rounded-full text-white" style="background:#4d7c0f;">0 件</span>
+            </div>
+            <div class="flex items-center gap-1 text-[11px] font-bold text-lime-900">
+                <i data-lucide="chevron-down" id="feeChevron" class="w-4 h-4 transition-transform duration-200" style="transform:rotate(0deg);"></i>
+            </div>
+        </div>
+        <div id="feeContainer" class="divide-y transition-all" style="--tw-divide-color:var(--border);"></div>
     </div>
 </div>
 
@@ -855,6 +900,35 @@ function showMessage(msg) {
     setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.2s'; setTimeout(() => toast.remove(), 220); }, 1500);
 }
 
+function toggleSection(sectionId, forceOpen = null) {
+    const container = document.getElementById(`${sectionId}Container`);
+    const chevron = document.getElementById(`${sectionId}Chevron`);
+    if (!container) return;
+
+    const isCurrentlyHidden = container.classList.contains('hidden');
+    const shouldOpen = forceOpen !== null ? forceOpen : isCurrentlyHidden;
+
+    if (shouldOpen) {
+        container.classList.remove('hidden');
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+    } else {
+        container.classList.add('hidden');
+        if (chevron) chevron.style.transform = 'rotate(-90deg)';
+    }
+}
+window.toggleSection = toggleSection;
+
+function updateSectionBadge(type, count) {
+    const badge = document.getElementById(`${type}Badge`);
+    if (!badge) return;
+    if (count > 0) {
+        badge.innerText = `${count} 件`;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
 function renderTable() {
     const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
     const sc = document.getElementById('skincareContainer');
@@ -862,14 +936,27 @@ function renderTable() {
     const fc = document.getElementById('feeContainer');
     sc.innerHTML = '';
     hc.innerHTML = '';
+    let scCount = 0, hcCount = 0;
     PRODUCT_DATA
         .filter(p => p.name.includes(searchTerm) || p.id.toLowerCase().includes(searchTerm) || p.alias.toLowerCase().includes(searchTerm))
         .forEach(item => {
-            if (item.isHealth) hc.appendChild(createRow(item, false));
-            else sc.appendChild(createRow(item, false));
+            if (item.isHealth) {
+                hc.appendChild(createRow(item, false));
+                hcCount++;
+            } else {
+                sc.appendChild(createRow(item, false));
+                scCount++;
+            }
         });
     fc.innerHTML = '';
     FEES.forEach(item => fc.appendChild(createRow(item, true)));
+
+    if (searchTerm) {
+        if (scCount > 0) toggleSection('skincare', true);
+        if (hcCount > 0) toggleSection('health', true);
+        if (FEES.length > 0) toggleSection('fee', true);
+    }
+
     updateTotals();
     if (window.lucide) window.lucide.createIcons();
 }
@@ -952,6 +1039,14 @@ function updateTotals() {
 
     document.getElementById('totalPrice').innerText = formatMoney(price);
     document.getElementById('totalPV').innerText = pv.toLocaleString();
+
+    const skincareCount = PRODUCT_DATA.filter(p => !p.isHealth).reduce((acc, p) => acc + (quantities[p.id] || 0), 0);
+    const healthCount = PRODUCT_DATA.filter(p => p.isHealth).reduce((acc, p) => acc + (quantities[p.id] || 0), 0);
+    const feeCount = FEES.reduce((acc, p) => acc + (quantities[p.id] || 0), 0);
+
+    updateSectionBadge('skincare', skincareCount);
+    updateSectionBadge('health', healthCount);
+    updateSectionBadge('fee', feeCount);
 
     const activePromo = PROMOS.find(p => pv >= p.threshold);
     const noticeEl = document.getElementById('promoNotice');
@@ -1313,7 +1408,7 @@ window.captureAndShare = async function() {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => { renderTable(); initQuoteMarquee(); });
+document.addEventListener('DOMContentLoaded', () => { renderTable(); initQuoteMarquee(); loadFeedbackMessages(); });
 
 // 【新增】統一明細產生器：確保複製與截圖的內容 100% 一致
 function generateFullOrderText() {
@@ -1331,7 +1426,6 @@ function generateFullOrderText() {
     lines.push(`  幣別：${currentCurrency === 'MYR' ? '馬幣 (MYR)' : '新台幣 (TWD)'}`);
     
     const now = new Date();
-    // 產生一致的時間格式：2026/03/01 18:50
     currentOrderTime = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
     
     lines.push(`  日期：${currentOrderTime}`);
@@ -1395,11 +1489,9 @@ function generateFullOrderText() {
 function getDeviceFingerprint() {
     let finger = localStorage.getItem('user_fingerprint');
     if (!finger) {
-        // 產生一個隨機 ID，例如: ID-168284567
         finger = 'ID-' + Math.floor(Date.now() / 1000) + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
         localStorage.setItem('user_fingerprint', finger);
     }
-    // 加上螢幕解析度，更精準識別電腦
     return `${finger} (${screen.width}x${screen.height})`;
 }
 
@@ -1412,36 +1504,43 @@ function getDeviceType() {
 
 // 3. 修改後的函式：接收外部傳入的文字
 async function uploadToSheet(fullText) {
-    // 【核心修正】改用「純資料」組合當作比對的 Key
     const orderer = getOrderer();
     const rank = getRankInfo().label;
-    // 將產品數量物件轉成字串，這是最純粹的內容比對
     const dataKey = JSON.stringify(quantities) + orderer + rank;
+    const nowTs = Date.now();
 
-    // 比對 DataKey 而不是比對帶有時間戳記的 fullText
-    if (dataKey === window.lastDataKey) {
-        console.log("訂單內容完全相同，攔截重複上傳");
+    // 3 秒內防重複點擊攔截，3 秒後或內容變動均可再次上傳
+    if (dataKey === window.lastDataKey && (nowTs - (window.lastUploadTime || 0)) < 3000) {
+        console.log("3秒內重複觸發，攔截重複上傳");
         return; 
     }
+    window.lastUploadTime = nowTs;
+    window.lastDataKey = dataKey;
 
-    // 產生一目瞭然的簡短商品摘要（例如：深層潔膚油(A1) x1、雙效潔顏露(1) x2）
     const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
     const shortSummary = activeItems.map(i => `${i.name}${i.alias ? '(' + i.alias + ')' : ''} x${quantities[i.id]}`).join('、');
 
-    // 置於 details 首行，確保 Google Sheet 未開啟「自動換行」時也能直接預覽看到商品項目
     const formattedDetails = shortSummary ? `【${shortSummary}】\n${fullText}` : fullText;
+    const timeStr = currentOrderTime || getTaipeiTimeString();
 
     const payload = {
         sheetName: '總表',
         type: 'order',
-        timeStamp: currentOrderTime, // 訂購時間
-        orderer: orderer || '',      // 訂購人（未填寫則留空）
-        rank: rank,                  // 位階
-        totalPrice: document.getElementById('totalPrice')?.innerText || "$0", // 總金額
-        totalPV: document.getElementById('totalPV')?.innerText || "0",       // 總PV值
-        deviceType: getDeviceType(), // 裝置
-        fingerprint: getDeviceFingerprint(), // 硬體ID
-        details: formattedDetails    // 訂單明細
+        action: 'order',
+        timeStamp: timeStr,
+        currency: currentCurrency === 'MYR' ? '馬幣 (MYR)' : '新台幣 (TWD)',
+        currentCurrency: currentCurrency,
+        orderer: orderer || '',
+        rank: rank,
+        totalPrice: document.getElementById('totalPrice')?.innerText || "$0",
+        totalPV: document.getElementById('totalPV')?.innerText || "0",
+        summary: shortSummary,
+        shortSummary: shortSummary,
+        details: formattedDetails,
+        deviceType: getDeviceType(),
+        fingerprint: getDeviceFingerprint(),
+        hardwareId: getDeviceFingerprint(),
+        deviceId: getDeviceFingerprint()
     };
 
     try {
@@ -1453,27 +1552,25 @@ async function uploadToSheet(fullText) {
             body: JSON.stringify(payload)
         });
         
-        // 儲存這次的 DataKey
-        window.lastDataKey = dataKey; 
         console.log("新訂單已同步至「總表」");
     } catch (error) {
         console.error("上傳失敗", error);
     }
 }
 
-
-// 七夕情人節・天麗語錄清單（每句均含專屬祝福，人名採富貴吉利金，避免紅字）
+// 天麗語錄清單
 const TENLEAD_QUOTES = [
-    "💖 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！甜蜜相伴每一天 🌹",
-    "✨ 多一人美麗、少一人憂鬱～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！💕",
-    "🌌 迢迢牽牛星，皎皎河漢女～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！🌟",
-    "💫 我要 健康 + 美麗 + 財富 = 三財一生！祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！💐",
-    "🌸 用天麗你最美，越用越自信～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！💖",
-    "💑 執子之手與子偕老～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！幸福圓滿 🌹",
-    "🌟 我們在一起就是了不起！祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！🎉",
-    "✨ 認真保養、深情相伴～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！愛意滿滿 💕",
-    "🌹 早用早美麗、容光煥發～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！💖",
-    "💎 浪漫七夕・星月相映～ 祝 <span class='highlight-name'>靜萱</span> & 天下有情人：七夕情人節快樂！幸福每一刻 🌸"
+    "多一人 美麗、少一人 憂鬱。",
+    "認真使用、熱情分享。",
+    "我要 健康 + 美麗 + 財富 = 三財一生。",
+    "用天麗～ 你最美！",
+    "斜桿事業、人生的第二春。",
+    "保養、首重清潔。",
+    "早用、早美麗。",
+    "配合度、就是滿意度。",
+    "我們在一起，就是了不起！",
+    "要 定期調單 喔。",
+    "一分鐘 防曬、剩過 24小時美白。"
 ];
 
 let lastQuoteIndex = -1;
@@ -1496,56 +1593,556 @@ function initQuoteMarquee() {
     });
 }
 
-// 意見回饋功能
-window.clearFeedback = function() {
-    const el = document.getElementById('feedbackInput');
-    if (el) {
-        el.value = '';
-    }
-};
+// 意見回饋與留言區功能
+window.allFeedbackMessages = [];
 
-window.submitFeedback = function() {
-    const el = document.getElementById('feedbackInput');
-    if (!el) return;
-    const content = el.value.trim();
-    if (!content) {
-        showMessage('請輸入您的寶貴意見或鼓勵！');
-        el.focus();
+function getTaipeiTimeString() {
+    try {
+        const d = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const h = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const s = String(d.getSeconds()).padStart(2, '0');
+        return `${y}/${m}/${day} ${h}:${min}:${s}`;
+    } catch (_) {
+        const now = new Date();
+        return `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    }
+}
+
+function formatDisplayTime(str) {
+    if (!str) return '';
+    str = String(str).trim();
+    if (/^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}\s+\d{1,2}:\d{1,2}/.test(str)) {
+        return str.replace(/-/g, '/');
+    }
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const h = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const s = String(d.getSeconds()).padStart(2, '0');
+        return `${y}/${m}/${day} ${h}:${min}:${s}`;
+    }
+    return str;
+}
+
+async function loadFeedbackMessages(showToast = false) {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+    let loadedData = null;
+
+    try {
+        const resp = await fetch(`${scriptURL}?action=getFeedback&sheetName=${encodeURIComponent('意見回饋')}&t=${Date.now()}`);
+        if (resp.ok) {
+            const resJson = await resp.json();
+            if (resJson && resJson.status === 'success' && Array.isArray(resJson.data)) {
+                loadedData = resJson.data
+                    .filter(item => {
+                        const c = String(item.content || item.feedback || item['內容'] || item['意見回饋'] || '').trim();
+                        const isDel = Boolean(item.isDeleted || String(item.status || item['狀態'] || '').indexOf('刪除') !== -1 || c.indexOf('[已由本人刪除]') !== -1);
+                        return c.length > 0 && !isDel;
+                    })
+                    .map(item => ({
+                        time: formatDisplayTime(item.time || item.timeStamp || item['時間'] || item.Timestamp || ''),
+                        user: item.user || item.orderer || item['使用人'] || item['留言人'] || item.User || '（匿名夥伴）',
+                        content: item.content || item.feedback || item['內容'] || item['意見回饋'] || item.Content || '',
+                        reply: item.reply || item['回覆'] || item['回覆內容'] || item.Reply || '',
+                        replyUser: item.replyUser || item['回覆人'] || item.reply_user || '',
+                        replyTime: formatDisplayTime(item.replyTime || item['回覆時間'] || item.reply_time || ''),
+                        fingerprint: item.fingerprint || item.hardwareId || ''
+                    }));
+            }
+        }
+    } catch (e) {
+        console.warn("從 Google Sheet 讀取留言失敗，使用本地快取：", e);
+    }
+
+    if (loadedData !== null) {
+        window.allFeedbackMessages = loadedData;
+        try { localStorage.setItem('tenlead_feedback_cache', JSON.stringify(loadedData)); } catch (_) {}
+    } else {
+        try {
+            const cached = localStorage.getItem('tenlead_feedback_cache');
+            if (cached) {
+                window.allFeedbackMessages = JSON.parse(cached);
+            }
+        } catch (_) {}
+    }
+
+    renderFeedbackMessages();
+
+    if (showToast) {
+        showMessage('✅ 留言區已更新至最新狀態');
+    }
+}
+
+function parseRepliesList(item) {
+    if (Array.isArray(item.replies) && item.replies.length > 0) {
+        return item.replies;
+    }
+    const rawText = item.reply || item['回覆'] || item['回覆內容'] || item.Reply || '';
+    if (!rawText.trim()) return [];
+
+    const regex = /\[(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}\s+\d{1,2}:\d{1,2}(?::\d{1,2})?)\]\s*([^:：\n]+)[：:]\s*([\s\S]*?)(?=(?:\[\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}\s+\d{1,2}:\d{1,2})|$)/g;
+    let matches = [];
+    let match;
+    while ((match = regex.exec(rawText)) !== null) {
+        let userRaw = match[2].trim();
+        let fp = '';
+        let fpMatch = userRaw.match(/\[(ID-[^\]]+)\]/);
+        let user = userRaw;
+        if (fpMatch) {
+            fp = fpMatch[1];
+            user = userRaw.replace(/\s*\[ID-[^\]]+\]/, '').trim();
+        }
+        matches.push({
+            time: formatDisplayTime(match[1].trim()),
+            user: user || '（匿名夥伴）',
+            fingerprint: fp,
+            content: match[3].trim().replace(/\n*---+\n*$/, '').trim()
+        });
+    }
+    if (matches.length > 0) return matches;
+
+    // 單筆舊格式或純文字回覆
+    let u = item.replyUser || item['回覆人'] || item.reply_user || '';
+    if (!u || u.trim() === '' || u === '匿名夥伴') u = '（匿名夥伴）';
+    return [{
+        time: formatDisplayTime(item.replyTime || item['回覆時間'] || item.reply_time || ''),
+        user: u.trim(),
+        fingerprint: item.replyFingerprint || item.replyHardwareId || '',
+        content: rawText.trim()
+    }];
+}
+
+function parseTimeToTimestamp(timeStr) {
+    if (!timeStr) return 0;
+    const clean = String(timeStr).trim().replace(/\//g, '-');
+    const ts = Date.parse(clean);
+    return isNaN(ts) ? 0 : ts;
+}
+
+function renderFeedbackMessages() {
+    const container = document.getElementById('commentListContainer');
+    const badge = document.getElementById('commentCountBadge');
+    if (!container) return;
+
+    const list = window.allFeedbackMessages || [];
+    if (badge) badge.innerText = `${list.length} 則`;
+
+    if (list.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-7 px-4 rounded-2xl border border-dashed" style="border-color:var(--border);background:var(--surface-2);">
+                <div class="w-9 h-9 mx-auto mb-2 rounded-full flex items-center justify-center" style="background:var(--primary-light);color:var(--primary);">
+                    <i data-lucide="message-square-dashed" class="w-4 h-4"></i>
+                </div>
+                <p class="text-xs font-bold text-slate-500">目前尚無留言紀錄</p>
+                <p class="text-[11px] font-semibold text-slate-400 mt-0.5">歡迎在上方留下您的寶貴意見或鼓勵！</p>
+            </div>
+        `;
+        if (window.lucide) window.lucide.createIcons();
         return;
     }
 
-    // 邊框閃爍效果
-    el.classList.remove('feedback-flash');
-    void el.offsetWidth; // 觸發重繪
-    el.classList.add('feedback-flash');
+    // 由新到舊排序
+    const sorted = [...list].sort((a, b) => {
+        const tA = parseTimeToTimestamp(a.time || a.timeStamp || a['時間'] || '');
+        const tB = parseTimeToTimestamp(b.time || b.timeStamp || b['時間'] || '');
+        return tB - tA;
+    });
 
-    // 傳送意見至 Google Sheets
-    uploadFeedbackToSheet(content);
+    const myFp = getDeviceFingerprint();
+    const myFpId = myFp ? myFp.split(' ')[0] : '';
 
-    // 提示已傳送通知
-    showMessage('✅ 已傳送！感謝您的寶貴意見');
+    container.innerHTML = sorted.map((item, idx) => {
+        const timeStr = formatDisplayTime(item.time || item.timeStamp || item['時間'] || '');
+        const safeId = 'cmt_' + (timeStr ? String(timeStr).replace(/[^a-zA-Z0-9]/g, '_') : idx);
+        
+        let userName = item.user || item.orderer || item['使用人'] || item['留言人'] || '';
+        if (!userName || userName.trim() === '' || userName === '匿名夥伴') {
+            userName = '（匿名夥伴）';
+        } else {
+            userName = userName.trim();
+        }
+        const userInitial = userName.replace(/[（()）]/g, '').trim().charAt(0) || '匿';
 
-    // 清除文字框
-    setTimeout(() => {
-        el.value = '';
-        el.classList.remove('feedback-flash');
-    }, 600);
+        const contentStr = item.content || item.feedback || item['內容'] || item['意見回饋'] || '';
+        const repliesList = parseRepliesList(item);
+
+        const itemFp = item.fingerprint || item.hardwareId || '';
+        const itemFpId = itemFp ? itemFp.split(' ')[0] : '';
+        const isMine = Boolean(myFpId && itemFpId && myFpId === itemFpId);
+
+        return `
+            <div class="p-3.5 rounded-2xl border transition-all" style="background:var(--surface-2);border-color:var(--border);">
+                <!-- 頂部：使用人與時間 -->
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full flex items-center justify-center font-black text-[11px] shrink-0"
+                            style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#ffffff;box-shadow:0 2px 6px rgba(124,58,237,0.25);">
+                            ${userInitial}
+                        </div>
+                        <span class="font-black text-[13px]" style="color:var(--text-1);">${userName}</span>
+                        ${isMine ? `<span class="text-[9px] font-black px-1.5 py-0.5 rounded-full" style="background:var(--primary-light);color:var(--primary);">我的留言</span>` : ''}
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        ${isMine ? `
+                        <div class="flex items-center gap-1">
+                            <button type="button" onclick="openEditCommentModal('${safeId}', '${timeStr}')"
+                                class="text-[11px] font-bold text-slate-400 hover:text-purple-600 px-1.5 py-0.5 rounded transition-all flex items-center gap-0.5"
+                                title="編輯留言">
+                                <i data-lucide="edit-2" class="w-3 h-3"></i>
+                                <span>編輯</span>
+                            </button>
+                            <button type="button" onclick="openDeleteCommentModal('${safeId}', '${timeStr}')"
+                                class="text-[11px] font-bold text-slate-400 hover:text-red-500 px-1.5 py-0.5 rounded transition-all flex items-center gap-0.5"
+                                title="刪除留言">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                                <span>刪除</span>
+                            </button>
+                        </div>
+                        ` : ''}
+                        <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                            <i data-lucide="clock" class="w-3 h-3"></i>
+                            <span>${timeStr}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 留言內容 -->
+                <div class="text-[13px] font-medium leading-relaxed mb-2 break-words pl-8" style="color:var(--text-1);">
+                    ${contentStr}
+                </div>
+
+                <!-- 歷史回覆串 -->
+                ${repliesList.length > 0 ? `
+                <div class="ml-8 mt-2 space-y-2">
+                    ${repliesList.map((r, rIdx) => {
+                        const rFp = r.fingerprint || '';
+                        const rFpId = rFp ? rFp.split(' ')[0] : '';
+                        const isMyReply = Boolean(myFpId && rFpId && myFpId === rFpId);
+                        return `
+                        <div class="p-2.5 rounded-xl border-l-4" style="background:var(--surface-3);border-color:var(--primary);">
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-[10px] font-black px-1.5 py-0.5 rounded flex items-center gap-1" style="background:var(--primary-light);color:var(--primary);">
+                                        ★ ${r.user || '（匿名夥伴）'} 回覆
+                                    </span>
+                                    ${isMyReply ? `<span class="text-[9px] font-bold px-1.5 py-0.2 rounded" style="background:var(--primary-light);color:var(--primary);">我的回覆</span>` : ''}
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    ${isMyReply ? `
+                                    <div class="flex items-center gap-1">
+                                        <button type="button" onclick="openEditReplyModal('${timeStr}', ${rIdx}, '${r.time}')"
+                                            class="text-[10px] font-bold text-slate-400 hover:text-purple-600 px-1 py-0.5 rounded transition-all flex items-center gap-0.5"
+                                            title="編輯回覆">
+                                            <i data-lucide="edit-2" class="w-2.5 h-2.5"></i>
+                                            <span>編輯</span>
+                                        </button>
+                                        <button type="button" onclick="openDeleteReplyModal('${timeStr}', ${rIdx}, '${r.time}')"
+                                            class="text-[10px] font-bold text-slate-400 hover:text-red-500 px-1 py-0.5 rounded transition-all flex items-center gap-0.5"
+                                            title="刪除回覆">
+                                            <i data-lucide="trash-2" class="w-2.5 h-2.5"></i>
+                                            <span>刪除</span>
+                                        </button>
+                                    </div>
+                                    ` : ''}
+                                    ${r.time ? `<span class="text-[10px] font-semibold text-slate-400">${r.time}</span>` : ''}
+                                </div>
+                            </div>
+                            <p class="text-[12px] font-medium leading-relaxed break-words" style="color:var(--text-1);">${r.content}</p>
+                        </div>
+                        `;
+                    }).join('')}
+                </div>
+                ` : ''}
+
+                <!-- 回覆按鈕 -->
+                <div class="flex justify-end mt-2">
+                    <button type="button" onclick="toggleReplyBox('${safeId}')"
+                        class="text-[11px] font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all active:scale-95"
+                        style="color:var(--primary);background:var(--primary-light);">
+                        <i data-lucide="reply" class="w-3 h-3"></i>
+                        <span>${repliesList.length > 0 ? '➕ 新增回覆' : '回覆留言'}</span>
+                    </button>
+                </div>
+
+                <!-- 回覆展開輸入區域 -->
+                <div id="replyBox-${safeId}" class="hidden mt-2.5 pt-2.5 border-t border-dashed" style="border-color:var(--border);">
+                    <div class="mb-2">
+                        <input type="text" id="replyUserInput-${safeId}"
+                            placeholder="回覆人"
+                            class="w-full p-2 rounded-xl outline-none text-[12px] font-bold"
+                            style="border:1.5px solid var(--border);background:#ffffff;color:var(--text-1);" />
+                    </div>
+                    <textarea id="replyInput-${safeId}" rows="2"
+                        placeholder="請輸入回覆內容..."
+                        class="w-full p-2.5 rounded-xl outline-none resize-none text-[12px] font-semibold"
+                        style="border:1.5px solid var(--border);background:#ffffff;color:var(--text-1);"></textarea>
+                    <div class="flex justify-end gap-2 mt-2">
+                        <button type="button" onclick="toggleReplyBox('${safeId}')"
+                            class="px-3 py-1 rounded-lg text-[11px] font-bold transition-all active:scale-95"
+                            style="background:var(--surface-3);border:1px solid var(--border);color:var(--text-2);">
+                            取消
+                        </button>
+                        <button type="button" onclick="submitCommentReply('${timeStr}', '${safeId}')"
+                            class="px-3.5 py-1 rounded-lg text-[11px] font-bold text-white transition-all active:scale-95 flex items-center gap-1"
+                            style="background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 2px 8px rgba(124,58,237,0.3);">
+                            <i data-lucide="send" class="w-3 h-3"></i>
+                            送出回覆
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
+window.openEditCommentModal = function(safeId, timeStr) {
+    const target = window.allFeedbackMessages.find(m => {
+        const t = formatDisplayTime(m.time || m.timeStamp || m['時間'] || '');
+        return t === timeStr || m.time === timeStr || m.timeStamp === timeStr;
+    });
+    if (!target) return;
+    
+    const modal = document.getElementById('editCommentModal');
+    const input = document.getElementById('editCommentInput');
+    const timeInput = document.getElementById('editCommentTargetTime');
+    if (modal && input && timeInput) {
+        timeInput.value = timeStr;
+        input.value = target.content || target.feedback || target['內容'] || '';
+        modal.classList.remove('hidden');
+        input.focus();
+        if (window.lucide) window.lucide.createIcons();
+    }
 };
 
-async function uploadFeedbackToSheet(feedbackText) {
-    const now = new Date();
-    const timeStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+window.closeEditCommentModal = function() {
+    const modal = document.getElementById('editCommentModal');
+    if (modal) modal.classList.add('hidden');
+};
 
+window.confirmSubmitEditComment = async function() {
+    const input = document.getElementById('editCommentInput');
+    const timeInput = document.getElementById('editCommentTargetTime');
+    if (!input || !timeInput) return;
+    
+    const newContent = input.value.trim();
+    if (!newContent) {
+        showMessage('留言內容不能為空！');
+        input.focus();
+        return;
+    }
+    
+    const timeStr = timeInput.value;
+    const target = window.allFeedbackMessages.find(m => {
+        const t = formatDisplayTime(m.time || m.timeStamp || m['時間'] || '');
+        return t === timeStr || m.time === timeStr || m.timeStamp === timeStr;
+    });
+    
+    if (target) {
+        target.content = newContent;
+        target.feedback = newContent;
+        target['內容'] = newContent;
+    }
+    
+    try { localStorage.setItem('tenlead_feedback_cache', JSON.stringify(window.allFeedbackMessages)); } catch (_) {}
+    renderFeedbackMessages();
+    closeEditCommentModal();
+    showMessage('✅ 留言已修改！');
+    
+    const fp = getDeviceFingerprint();
     const payload = {
         sheetName: '意見回饋',
-        type: 'feedback',
-        timeStamp: timeStr,           // 時間
-        user: getOrderer() || '',     // 使用人（未填寫則留空）
-        orderer: getOrderer() || '',
-        content: feedbackText,        // 內容
-        feedback: feedbackText,
-        deviceType: getDeviceType(),  // 裝置
-        fingerprint: getDeviceFingerprint() // 硬體ID
+        type: 'editFeedback',
+        action: 'editFeedback',
+        timeStamp: timeStr,
+        targetTime: timeStr,
+        newContent: newContent,
+        fingerprint: fp,
+        hardwareId: fp,
+        editTime: getTaipeiTimeString()
+    };
+    
+    try {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        setTimeout(() => { loadFeedbackMessages(false); }, 1500);
+    } catch (e) {
+        console.error("編輯同步失敗：", e);
+    }
+};
+
+window.openDeleteCommentModal = function(safeId, timeStr) {
+    const modal = document.getElementById('deleteCommentModal');
+    const timeInput = document.getElementById('deleteCommentTargetTime');
+    if (modal && timeInput) {
+        timeInput.value = timeStr;
+        modal.classList.remove('hidden');
+        if (window.lucide) window.lucide.createIcons();
+    }
+};
+
+window.closeDeleteCommentModal = function() {
+    const modal = document.getElementById('deleteCommentModal');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.confirmSubmitDeleteComment = async function() {
+    const timeInput = document.getElementById('deleteCommentTargetTime');
+    if (!timeInput) return;
+    const timeStr = timeInput.value;
+    
+    // 從清單中移除
+    window.allFeedbackMessages = window.allFeedbackMessages.filter(m => {
+        const t = formatDisplayTime(m.time || m.timeStamp || m['時間'] || '');
+        return !(t === timeStr || m.time === timeStr || m.timeStamp === timeStr);
+    });
+    
+    try { localStorage.setItem('tenlead_feedback_cache', JSON.stringify(window.allFeedbackMessages)); } catch (_) {}
+    renderFeedbackMessages();
+    closeDeleteCommentModal();
+    showMessage('🗑️ 留言已刪除');
+    
+    const fp = getDeviceFingerprint();
+    const payload = {
+        sheetName: '意見回饋',
+        type: 'deleteFeedback',
+        action: 'deleteFeedback',
+        timeStamp: timeStr,
+        targetTime: timeStr,
+        fingerprint: fp,
+        hardwareId: fp,
+        deleteTime: getTaipeiTimeString()
+    };
+    
+    try {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        setTimeout(() => { loadFeedbackMessages(false); }, 1500);
+    } catch (e) {
+        console.error("刪除同步失敗：", e);
+    }
+};
+
+window.openEditReplyModal = function(commentTimeStr, replyIdx, replyTime) {
+    const target = window.allFeedbackMessages.find(m => {
+        const t = formatDisplayTime(m.time || m.timeStamp || m['時間'] || '');
+        return t === commentTimeStr || m.time === commentTimeStr || m.timeStamp === commentTimeStr;
+    });
+    if (!target) return;
+    const replies = parseRepliesList(target);
+    const replyItem = replies[replyIdx] || replies.find(r => r.time === replyTime);
+    if (!replyItem) return;
+
+    const modal = document.getElementById('editReplyModal');
+    const input = document.getElementById('editReplyInput');
+    const cTimeEl = document.getElementById('editReplyCommentTime');
+    const rTimeEl = document.getElementById('editReplyTime');
+    const rIdxEl = document.getElementById('editReplyIdx');
+
+    if (modal && input && cTimeEl && rTimeEl && rIdxEl) {
+        cTimeEl.value = commentTimeStr;
+        rTimeEl.value = replyTime;
+        rIdxEl.value = replyIdx;
+        input.value = replyItem.content || '';
+        modal.classList.remove('hidden');
+        input.focus();
+        if (window.lucide) window.lucide.createIcons();
+    }
+};
+
+window.closeEditReplyModal = function() {
+    const modal = document.getElementById('editReplyModal');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.confirmSubmitEditReply = async function() {
+    const input = document.getElementById('editReplyInput');
+    const cTimeEl = document.getElementById('editReplyCommentTime');
+    const rTimeEl = document.getElementById('editReplyTime');
+    const rIdxEl = document.getElementById('editReplyIdx');
+    if (!input || !cTimeEl || !rTimeEl) return;
+
+    const newContent = input.value.trim();
+    if (!newContent) {
+        showMessage('回覆內容不能為空！');
+        input.focus();
+        return;
+    }
+
+    const commentTimeStr = cTimeEl.value;
+    const replyTime = rTimeEl.value;
+    const replyIdx = parseInt(rIdxEl.value, 10);
+
+    const target = window.allFeedbackMessages.find(m => {
+        const t = formatDisplayTime(m.time || m.timeStamp || m['時間'] || '');
+        return t === commentTimeStr || m.time === commentTimeStr || m.timeStamp === commentTimeStr;
+    });
+    if (!target) return;
+
+    const replies = parseRepliesList(target);
+    let oldReplyContent = '';
+    let replyUser = '';
+    if (typeof replyIdx === 'number' && replies[replyIdx]) {
+        oldReplyContent = replies[replyIdx].content || '';
+        replyUser = replies[replyIdx].user || '';
+        replies[replyIdx].content = newContent;
+    } else {
+        const match = replies.find(r => r.time === replyTime);
+        if (match) {
+            oldReplyContent = match.content || '';
+            replyUser = match.user || '';
+            match.content = newContent;
+        }
+    }
+
+    const fullFormatted = replies.map(r => {
+        const fpPart = r.fingerprint ? ` [${r.fingerprint}]` : '';
+        return `[${r.time}] ${r.user}${fpPart}: ${r.content}`;
+    }).join('\n---\n');
+
+    target.replies = replies;
+    target.reply = fullFormatted;
+    target['回覆'] = fullFormatted;
+
+    try { localStorage.setItem('tenlead_feedback_cache', JSON.stringify(window.allFeedbackMessages)); } catch (_) {}
+    renderFeedbackMessages();
+    closeEditReplyModal();
+    showMessage('✅ 回覆已修改！');
+
+    const fp = getDeviceFingerprint();
+    const payload = {
+        sheetName: '意見回饋',
+        type: 'editReply',
+        action: 'editReply',
+        timeStamp: commentTimeStr,
+        targetTime: commentTimeStr,
+        replyTime: replyTime,
+        replyUser: replyUser,
+        oldReplyContent: oldReplyContent,
+        newReplyContent: newContent,
+        reply: fullFormatted,
+        fullFormattedReply: fullFormatted,
+        fingerprint: fp,
+        hardwareId: fp,
+        editTime: getTaipeiTimeString()
     };
 
     try {
@@ -1556,7 +2153,296 @@ async function uploadFeedbackToSheet(feedbackText) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        console.log("意見回饋已傳送至「意見回饋」頁籤");
+        setTimeout(() => { loadFeedbackMessages(false); }, 1500);
+    } catch (e) {
+        console.error("編輯回覆同步失敗：", e);
+    }
+};
+
+window.openDeleteReplyModal = function(commentTimeStr, replyIdx, replyTime) {
+    const modal = document.getElementById('deleteReplyModal');
+    const cTimeEl = document.getElementById('deleteReplyCommentTime');
+    const rTimeEl = document.getElementById('deleteReplyTime');
+    const rIdxEl = document.getElementById('deleteReplyIdx');
+    if (modal && cTimeEl && rTimeEl && rIdxEl) {
+        cTimeEl.value = commentTimeStr;
+        rTimeEl.value = replyTime;
+        rIdxEl.value = replyIdx;
+        modal.classList.remove('hidden');
+        if (window.lucide) window.lucide.createIcons();
+    }
+};
+
+window.closeDeleteReplyModal = function() {
+    const modal = document.getElementById('deleteReplyModal');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.confirmSubmitDeleteReply = async function() {
+    const cTimeEl = document.getElementById('deleteReplyCommentTime');
+    const rTimeEl = document.getElementById('deleteReplyTime');
+    const rIdxEl = document.getElementById('deleteReplyIdx');
+    if (!cTimeEl || !rTimeEl) return;
+
+    const commentTimeStr = cTimeEl.value;
+    const replyTime = rTimeEl.value;
+    const replyIdx = parseInt(rIdxEl.value, 10);
+
+    const target = window.allFeedbackMessages.find(m => {
+        const t = formatDisplayTime(m.time || m.timeStamp || m['時間'] || '');
+        return t === commentTimeStr || m.time === commentTimeStr || m.timeStamp === commentTimeStr;
+    });
+    if (!target) return;
+
+    let replies = parseRepliesList(target);
+    let deletedReplyContent = '';
+    let replyUser = '';
+    if (typeof replyIdx === 'number' && replies[replyIdx]) {
+        deletedReplyContent = replies[replyIdx].content || '';
+        replyUser = replies[replyIdx].user || '';
+        replies.splice(replyIdx, 1);
+    } else {
+        const match = replies.find(r => r.time === replyTime);
+        if (match) {
+            deletedReplyContent = match.content || '';
+            replyUser = match.user || '';
+        }
+        replies = replies.filter(r => r.time !== replyTime);
+    }
+
+    const fullFormatted = replies.map(r => {
+        const fpPart = r.fingerprint ? ` [${r.fingerprint}]` : '';
+        return `[${r.time}] ${r.user}${fpPart}: ${r.content}`;
+    }).join('\n---\n');
+
+    target.replies = replies;
+    target.reply = fullFormatted;
+    target['回覆'] = fullFormatted;
+
+    try { localStorage.setItem('tenlead_feedback_cache', JSON.stringify(window.allFeedbackMessages)); } catch (_) {}
+    renderFeedbackMessages();
+    closeDeleteReplyModal();
+    showMessage('🗑️ 回覆已刪除');
+
+    const fp = getDeviceFingerprint();
+    const payload = {
+        sheetName: '意見回饋',
+        type: 'deleteReply',
+        action: 'deleteReply',
+        timeStamp: commentTimeStr,
+        targetTime: commentTimeStr,
+        replyTime: replyTime,
+        replyUser: replyUser,
+        deletedReplyContent: deletedReplyContent,
+        reply: fullFormatted,
+        fullFormattedReply: fullFormatted,
+        fingerprint: fp,
+        hardwareId: fp,
+        deleteTime: getTaipeiTimeString()
+    };
+
+    try {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        setTimeout(() => { loadFeedbackMessages(false); }, 1500);
+    } catch (e) {
+        console.error("刪除回覆同步失敗：", e);
+    }
+};
+
+window.toggleReplyBox = function(safeId) {
+    const box = document.getElementById(`replyBox-${safeId}`);
+    if (box) {
+        box.classList.toggle('hidden');
+        if (!box.classList.contains('hidden')) {
+            const input = document.getElementById(`replyInput-${safeId}`);
+            if (input) input.focus();
+        }
+    }
+};
+
+window.submitCommentReply = async function(itemTime, safeId) {
+    const input = document.getElementById(`replyInput-${safeId}`);
+    const userInput = document.getElementById(`replyUserInput-${safeId}`);
+    if (!input) return;
+
+    const replyText = input.value.trim();
+    if (!replyText) {
+        showMessage('請輸入回覆內容！');
+        input.focus();
+        return;
+    }
+
+    let replyUser = userInput ? userInput.value.trim() : '';
+    if (!replyUser) {
+        replyUser = '（匿名夥伴）';
+    }
+
+    const replyTimeStr = getTaipeiTimeString();
+    const replierFingerprint = getDeviceFingerprint(); // 回覆人的硬體ID
+
+    let target = window.allFeedbackMessages.find(m => {
+        const t = formatDisplayTime(m.time || m.timeStamp || m['時間'] || '');
+        return t === itemTime || m.time === itemTime || m.timeStamp === itemTime;
+    });
+
+    const itemContent = target ? (target.content || target.feedback || target['內容'] || target['意見回饋'] || '') : '';
+    const existingReplies = target ? [...parseRepliesList(target)] : [];
+    
+    // 累加新回覆至清單中
+    existingReplies.push({
+        time: replyTimeStr,
+        user: replyUser,
+        fingerprint: replierFingerprint,
+        content: replyText
+    });
+
+    // 格式包含回覆人的硬體ID
+    const fullFormatted = existingReplies.map(r => {
+        const fpPart = r.fingerprint ? ` [${r.fingerprint}]` : '';
+        return `[${r.time}] ${r.user}${fpPart}: ${r.content}`;
+    }).join('\n---\n');
+
+    if (target) {
+        target.replies = existingReplies;
+        target.reply = fullFormatted;
+        target['回覆'] = fullFormatted;
+        target.replyUser = replyUser;
+        target.replyTime = replyTimeStr;
+        target.replyFingerprint = replierFingerprint;
+    }
+
+    try { localStorage.setItem('tenlead_feedback_cache', JSON.stringify(window.allFeedbackMessages)); } catch (_) {}
+    renderFeedbackMessages();
+
+    toggleReplyBox(safeId);
+    showMessage('✅ 回覆已送出！');
+
+    const payload = {
+        sheetName: '意見回饋',
+        type: 'reply',
+        action: 'reply',
+        timeStamp: itemTime,
+        targetTime: itemTime,
+        targetContent: itemContent,
+        targetUser: target ? (target.user || target.orderer || target['使用人'] || '') : '',
+        reply: fullFormatted,
+        fullFormattedReply: fullFormatted,
+        newReply: replyText,
+        replyUser: replyUser,
+        replyTime: replyTimeStr,
+        replyFingerprint: replierFingerprint,
+        replyHardwareId: replierFingerprint
+    };
+
+    try {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        setTimeout(() => {
+            loadFeedbackMessages(false);
+        }, 1500);
+    } catch (e) {
+        console.error("回覆同步失敗：", e);
+    }
+};
+
+window.clearFeedback = function() {
+    const el = document.getElementById('feedbackInput');
+    const userEl = document.getElementById('feedbackUserInput');
+    if (el) el.value = '';
+    if (userEl) userEl.value = '';
+};
+
+window.submitFeedback = function() {
+    const el = document.getElementById('feedbackInput');
+    const userEl = document.getElementById('feedbackUserInput');
+    if (!el) return;
+
+    const content = el.value.trim();
+    if (!content) {
+        showMessage('請輸入您的寶貴意見或鼓勵！');
+        el.focus();
+        return;
+    }
+
+    let userStr = userEl ? userEl.value.trim() : '';
+    if (!userStr) {
+        userStr = '（匿名夥伴）';
+    }
+
+    el.classList.remove('feedback-flash');
+    void el.offsetWidth;
+    el.classList.add('feedback-flash');
+
+    const timeStr = getTaipeiTimeString();
+    const fp = getDeviceFingerprint();
+
+    window.allFeedbackMessages.unshift({
+        time: timeStr,
+        user: userStr,
+        content: content,
+        reply: '',
+        replyUser: '',
+        replyTime: '',
+        fingerprint: fp,
+        hardwareId: fp
+    });
+    try { localStorage.setItem('tenlead_feedback_cache', JSON.stringify(window.allFeedbackMessages)); } catch (_) {}
+    renderFeedbackMessages();
+
+    uploadFeedbackToSheet(content, timeStr, userStr);
+    showMessage('✅ 留言已送出！感謝您的寶貴意見');
+
+    setTimeout(() => {
+        el.value = '';
+        if (userEl) userEl.value = '';
+        el.classList.remove('feedback-flash');
+    }, 600);
+};
+
+async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
+    if (!timeStr) {
+        timeStr = getTaipeiTimeString();
+    }
+    if (!userStr) userStr = '（匿名夥伴）';
+
+    const fp = getDeviceFingerprint();
+
+    const payload = {
+        sheetName: '意見回饋',
+        type: 'feedback',
+        action: 'feedback',
+        timeStamp: timeStr,
+        user: userStr,
+        orderer: userStr,
+        content: feedbackText,
+        feedback: feedbackText,
+        reply: '',
+        deviceType: getDeviceType(),
+        fingerprint: fp,
+        hardwareId: fp,
+        deviceId: fp
+    };
+
+    try {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
     } catch (error) {
         console.error("意見傳送失敗", error);
     }
@@ -1575,6 +2461,13 @@ async function uploadFeedbackToSheet(feedbackText) {
             </div>
             <span style="font-size:11px;font-weight:700;color:var(--text-2);">歡迎交流</span>
         </div>
+        <!-- 留言人輸入框 -->
+        <div class="mb-2.5">
+            <input type="text" id="feedbackUserInput"
+                placeholder="留言人"
+                class="w-full p-2.5 rounded-xl outline-none text-[13px] font-bold transition-all"
+                style="border:1.5px solid var(--border);background:var(--surface-3);color:var(--text-1);" />
+        </div>
         <textarea id="feedbackInput" rows="3"
             placeholder="任何鼓勵或改善意見，都歡迎留言！"
             class="feedback-box w-full p-3 rounded-xl outline-none resize-none transition-all duration-200"
@@ -1590,6 +2483,30 @@ async function uploadFeedbackToSheet(feedbackText) {
                 style="background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 2px 10px rgba(124,58,237,0.3);font-size:clamp(11px,3vw,13px);">
                 <i data-lucide="send" class="w-3.5 h-3.5"></i> 送出
             </button>
+        </div>
+    </div>
+
+    <!-- 留言區（顯示 Google Sheet「意見回饋」內容：時間、使用人、內容、回覆） -->
+    <div class="card p-4 mb-6" style="background:var(--surface);">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(245, 158, 11, 0.15));color:var(--primary);">
+                    <i data-lucide="messages-square" class="w-4 h-4"></i>
+                </div>
+                <h3 style="font-size:clamp(13px,3.5vw,15px);font-weight:900;color:var(--text-1);">留言區</h3>
+                <span id="commentCountBadge" class="text-[10px] font-black px-2 py-0.5 rounded-full" style="background:var(--primary-light);color:var(--primary);">0 則</span>
+            </div>
+            <button type="button" onclick="loadFeedbackMessages(true)"
+                class="px-2.5 py-1 rounded-xl border flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-purple-600 active:scale-95 transition-all"
+                style="border-color:var(--border);background:var(--surface-3);" title="重新載入留言">
+                <i data-lucide="refresh-cw" id="commentRefreshIcon" class="w-3.5 h-3.5"></i>
+                <span>重新整理</span>
+            </button>
+        </div>
+
+        <!-- 留言列表清單 -->
+        <div id="commentListContainer" class="space-y-3 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
+            <!-- 動態渲染留言項目 -->
         </div>
     </div>
 
@@ -1627,6 +2544,134 @@ async function uploadFeedbackToSheet(feedbackText) {
         </details>
     </div>
 </footer>
+
+<!-- 編輯留言 Modal -->
+<div id="editCommentModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4"
+    style="background:rgba(30,27,46,0.65);backdrop-filter:blur(6px);">
+    <div class="bg-white w-full max-w-md shadow-2xl rounded-3xl p-5 transform transition-all" style="border:1px solid var(--border);">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold" style="background:var(--primary-light);color:var(--primary);">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </div>
+                <h3 class="font-black text-[15px]" style="color:var(--text-1);">編輯留言</h3>
+            </div>
+            <button type="button" onclick="closeEditCommentModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <input type="hidden" id="editCommentTargetTime" />
+        <textarea id="editCommentInput" rows="4"
+            placeholder="請輸入修改後的留言內容..."
+            class="w-full p-3.5 rounded-2xl outline-none resize-none text-[13px] font-semibold"
+            style="border:1.5px solid var(--border);background:var(--surface-3);color:var(--text-1);"></textarea>
+        <div class="flex justify-end gap-2 mt-3.5">
+            <button type="button" onclick="closeEditCommentModal()"
+                class="px-4 py-2 rounded-xl text-[12px] font-bold"
+                style="background:var(--surface-3);border:1px solid var(--border);color:var(--text-2);">
+                取消
+            </button>
+            <button type="button" onclick="confirmSubmitEditComment()"
+                class="px-5 py-2 rounded-xl text-[12px] font-bold text-white transition-all active:scale-95 flex items-center gap-1.5"
+                style="background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 2px 8px rgba(124,58,237,0.3);">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                儲存修改
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 刪除留言確認 Modal -->
+<div id="deleteCommentModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4"
+    style="background:rgba(30,27,46,0.65);backdrop-filter:blur(6px);">
+    <div class="bg-white w-full max-w-sm shadow-2xl rounded-3xl p-6 text-center transform transition-all" style="border:1px solid var(--border);">
+        <div class="w-12 h-12 mx-auto mb-3.5 rounded-2xl flex items-center justify-center" style="background:#fee2e2;color:#ef4444;">
+            <i data-lucide="trash-2" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-black text-[16px] mb-1.5" style="color:var(--text-1);">確定要刪除這則留言嗎？</h3>
+        <p class="text-[12px] font-semibold text-slate-400 mb-5 leading-relaxed">刪除後此留言將從前台留言區移除。</p>
+        <input type="hidden" id="deleteCommentTargetTime" />
+        <div class="flex justify-center gap-2.5">
+            <button type="button" onclick="closeDeleteCommentModal()"
+                class="px-4 py-2 rounded-xl text-[12px] font-bold"
+                style="background:var(--surface-3);border:1px solid var(--border);color:var(--text-2);">
+                取消
+            </button>
+            <button type="button" onclick="confirmSubmitDeleteComment()"
+                class="px-5 py-2 rounded-xl text-[12px] font-bold text-white transition-all active:scale-95 flex items-center gap-1"
+                style="background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 2px 8px rgba(239,68,68,0.3);">
+                <i data-lucide="trash" class="w-3.5 h-3.5"></i>
+                確定刪除
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 編輯回覆 Modal -->
+<div id="editReplyModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4"
+    style="background:rgba(30,27,46,0.65);backdrop-filter:blur(6px);">
+    <div class="bg-white w-full max-w-md shadow-2xl rounded-3xl p-5 transform transition-all" style="border:1px solid var(--border);">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold" style="background:var(--primary-light);color:var(--primary);">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </div>
+                <h3 class="font-black text-[15px]" style="color:var(--text-1);">編輯我的回覆</h3>
+            </div>
+            <button type="button" onclick="closeEditReplyModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <input type="hidden" id="editReplyCommentTime" />
+        <input type="hidden" id="editReplyTime" />
+        <input type="hidden" id="editReplyIdx" />
+        <textarea id="editReplyInput" rows="3"
+            placeholder="請輸入修改後的回覆內容..."
+            class="w-full p-3.5 rounded-2xl outline-none resize-none text-[13px] font-semibold"
+            style="border:1.5px solid var(--border);background:var(--surface-3);color:var(--text-1);"></textarea>
+        <div class="flex justify-end gap-2 mt-3.5">
+            <button type="button" onclick="closeEditReplyModal()"
+                class="px-4 py-2 rounded-xl text-[12px] font-bold"
+                style="background:var(--surface-3);border:1px solid var(--border);color:var(--text-2);">
+                取消
+            </button>
+            <button type="button" onclick="confirmSubmitEditReply()"
+                class="px-5 py-2 rounded-xl text-[12px] font-bold text-white transition-all active:scale-95 flex items-center gap-1.5"
+                style="background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 2px 8px rgba(124,58,237,0.3);">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                儲存回覆
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 刪除回覆確認 Modal -->
+<div id="deleteReplyModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4"
+    style="background:rgba(30,27,46,0.65);backdrop-filter:blur(6px);">
+    <div class="bg-white w-full max-w-sm shadow-2xl rounded-3xl p-6 text-center transform transition-all" style="border:1px solid var(--border);">
+        <div class="w-12 h-12 mx-auto mb-3.5 rounded-2xl flex items-center justify-center" style="background:#fee2e2;color:#ef4444;">
+            <i data-lucide="trash-2" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-black text-[16px] mb-1.5" style="color:var(--text-1);">確定要刪除這則回覆嗎？</h3>
+        <p class="text-[12px] font-semibold text-slate-400 mb-5 leading-relaxed">刪除後此回覆將從留言串中移除。</p>
+        <input type="hidden" id="deleteReplyCommentTime" />
+        <input type="hidden" id="deleteReplyTime" />
+        <input type="hidden" id="deleteReplyIdx" />
+        <div class="flex justify-center gap-2.5">
+            <button type="button" onclick="closeDeleteReplyModal()"
+                class="px-4 py-2 rounded-xl text-[12px] font-bold"
+                style="background:var(--surface-3);border:1px solid var(--border);color:var(--text-2);">
+                取消
+            </button>
+            <button type="button" onclick="confirmSubmitDeleteReply()"
+                class="px-5 py-2 rounded-xl text-[12px] font-bold text-white transition-all active:scale-95 flex items-center gap-1"
+                style="background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 2px 8px rgba(239,68,68,0.3);">
+                <i data-lucide="trash" class="w-3.5 h-3.5"></i>
+                確定刪除
+            </button>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
