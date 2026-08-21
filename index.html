@@ -1631,30 +1631,69 @@ function formatDisplayTime(str) {
     return str;
 }
 
+function applyFeedbackVisibility(settings) {
+    let isFeedbackEnabled = true;
+    if (settings && typeof settings === 'object') {
+        for (const k in settings) {
+            if (k.includes('留言') || k.includes('意見') || k.toLowerCase().includes('feedback')) {
+                const val = String(settings[k]).toLowerCase().trim();
+                if (['關閉', '隱藏', '停用', 'false', '0', 'n', 'no', 'off', '不顯示', 'x'].includes(val)) {
+                    isFeedbackEnabled = false;
+                } else if (['開啟', '顯示', '啟用', 'true', '1', 'y', 'yes', 'on', 'v'].includes(val)) {
+                    isFeedbackEnabled = true;
+                }
+            }
+        }
+    }
+    const wrapper = document.getElementById('feedbackSectionWrapper');
+    if (wrapper) {
+        if (isFeedbackEnabled) {
+            wrapper.classList.remove('hidden');
+            wrapper.style.display = '';
+        } else {
+            wrapper.classList.add('hidden');
+            wrapper.style.display = 'none';
+        }
+    }
+}
+
 async function loadFeedbackMessages(showToast = false) {
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
     let loadedData = null;
 
     try {
+        const cachedSettings = localStorage.getItem('tenlead_app_settings');
+        if (cachedSettings) {
+            applyFeedbackVisibility(JSON.parse(cachedSettings));
+        }
+    } catch (_) {}
+
+    try {
         const resp = await fetch(`${scriptURL}?action=getFeedback&sheetName=${encodeURIComponent('意見回饋')}&t=${Date.now()}`);
         if (resp.ok) {
             const resJson = await resp.json();
-            if (resJson && resJson.status === 'success' && Array.isArray(resJson.data)) {
-                loadedData = resJson.data
-                    .filter(item => {
-                        const c = String(item.content || item.feedback || item['內容'] || item['意見回饋'] || '').trim();
-                        const isDel = Boolean(item.isDeleted || String(item.status || item['狀態'] || '').indexOf('刪除') !== -1 || c.indexOf('[已由本人刪除]') !== -1);
-                        return c.length > 0 && !isDel;
-                    })
-                    .map(item => ({
-                        time: formatDisplayTime(item.time || item.timeStamp || item['時間'] || item.Timestamp || ''),
-                        user: item.user || item.orderer || item['使用人'] || item['留言人'] || item.User || '（匿名夥伴）',
-                        content: item.content || item.feedback || item['內容'] || item['意見回饋'] || item.Content || '',
-                        reply: item.reply || item['回覆'] || item['回覆內容'] || item.Reply || '',
-                        replyUser: item.replyUser || item['回覆人'] || item.reply_user || '',
-                        replyTime: formatDisplayTime(item.replyTime || item['回覆時間'] || item.reply_time || ''),
-                        fingerprint: item.fingerprint || item.hardwareId || ''
-                    }));
+            if (resJson && resJson.status === 'success') {
+                if (resJson.settings) {
+                    applyFeedbackVisibility(resJson.settings);
+                    try { localStorage.setItem('tenlead_app_settings', JSON.stringify(resJson.settings)); } catch (_) {}
+                }
+                if (Array.isArray(resJson.data)) {
+                    loadedData = resJson.data
+                        .filter(item => {
+                            const c = String(item.content || item.feedback || item['內容'] || item['意見回饋'] || '').trim();
+                            const isDel = Boolean(item.isDeleted || String(item.status || item['狀態'] || '').indexOf('刪除') !== -1 || c.indexOf('[已由本人刪除]') !== -1);
+                            return c.length > 0 && !isDel;
+                        })
+                        .map(item => ({
+                            time: formatDisplayTime(item.time || item.timeStamp || item['時間'] || item.Timestamp || ''),
+                            user: item.user || item.orderer || item['使用人'] || item['留言人'] || item.User || '（匿名夥伴）',
+                            content: item.content || item.feedback || item['內容'] || item['意見回饋'] || item.Content || '',
+                            reply: item.reply || item['回覆'] || item['回覆內容'] || item.Reply || '',
+                            replyUser: item.replyUser || item['回覆人'] || item.reply_user || '',
+                            replyTime: formatDisplayTime(item.replyTime || item['回覆時間'] || item.reply_time || ''),
+                            fingerprint: item.fingerprint || item.hardwareId || ''
+                        }));
+                }
             }
         }
     } catch (e) {
@@ -2450,63 +2489,66 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
 </script>
 
 <footer class="max-w-2xl mx-auto px-4 pb-32 pt-10">
-    <!-- 意見回饋 -->
-    <div class="card p-4 mb-6" style="background:var(--surface);">
-        <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:var(--primary-light);color:var(--primary);">
-                    <i data-lucide="message-square" class="w-4 h-4"></i>
+    <!-- 意見回饋與留言區外層容器（由 Google Sheet「設定」的「留言區」狀態控制顯示/隱藏） -->
+    <div id="feedbackSectionWrapper">
+        <!-- 意見回饋 -->
+        <div class="card p-4 mb-6" style="background:var(--surface);">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:var(--primary-light);color:var(--primary);">
+                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                    </div>
+                    <h3 style="font-size:clamp(13px,3.5vw,15px);font-weight:900;color:var(--text-1);">意見回饋</h3>
                 </div>
-                <h3 style="font-size:clamp(13px,3.5vw,15px);font-weight:900;color:var(--text-1);">意見回饋</h3>
+                <span style="font-size:11px;font-weight:700;color:var(--text-2);">歡迎交流</span>
             </div>
-            <span style="font-size:11px;font-weight:700;color:var(--text-2);">歡迎交流</span>
-        </div>
-        <!-- 留言人輸入框 -->
-        <div class="mb-2.5">
-            <input type="text" id="feedbackUserInput"
-                placeholder="留言人"
-                class="w-full p-2.5 rounded-xl outline-none text-[13px] font-bold transition-all"
-                style="border:1.5px solid var(--border);background:var(--surface-3);color:var(--text-1);" />
-        </div>
-        <textarea id="feedbackInput" rows="3"
-            placeholder="任何鼓勵或改善意見，都歡迎留言！"
-            class="feedback-box w-full p-3 rounded-xl outline-none resize-none transition-all duration-200"
-            style="border:1.5px solid var(--border);background:var(--surface-3);font-size:clamp(12px,3.2vw,14px);font-weight:600;color:var(--text-1);"></textarea>
-        <div class="flex justify-end gap-2 mt-2.5">
-            <button type="button" onclick="clearFeedback()"
-                class="px-4 py-2 rounded-xl font-bold transition-all active:scale-95 flex items-center gap-1.5"
-                style="background:var(--surface-3);border:1.5px solid var(--border);color:var(--text-2);font-size:clamp(11px,3vw,13px);">
-                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 清除
-            </button>
-            <button type="button" onclick="submitFeedback()"
-                class="px-5 py-2 rounded-xl font-bold text-white transition-all active:scale-95 flex items-center gap-1.5"
-                style="background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 2px 10px rgba(124,58,237,0.3);font-size:clamp(11px,3vw,13px);">
-                <i data-lucide="send" class="w-3.5 h-3.5"></i> 送出
-            </button>
-        </div>
-    </div>
-
-    <!-- 留言區（顯示 Google Sheet「意見回饋」內容：時間、使用人、內容、回覆） -->
-    <div class="card p-4 mb-6" style="background:var(--surface);">
-        <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(245, 158, 11, 0.15));color:var(--primary);">
-                    <i data-lucide="messages-square" class="w-4 h-4"></i>
-                </div>
-                <h3 style="font-size:clamp(13px,3.5vw,15px);font-weight:900;color:var(--text-1);">留言區</h3>
-                <span id="commentCountBadge" class="text-[10px] font-black px-2 py-0.5 rounded-full" style="background:var(--primary-light);color:var(--primary);">0 則</span>
+            <!-- 留言人輸入框 -->
+            <div class="mb-2.5">
+                <input type="text" id="feedbackUserInput"
+                    placeholder="留言人"
+                    class="w-full p-2.5 rounded-xl outline-none text-[13px] font-bold transition-all"
+                    style="border:1.5px solid var(--border);background:var(--surface-3);color:var(--text-1);" />
             </div>
-            <button type="button" onclick="loadFeedbackMessages(true)"
-                class="px-2.5 py-1 rounded-xl border flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-purple-600 active:scale-95 transition-all"
-                style="border-color:var(--border);background:var(--surface-3);" title="重新載入留言">
-                <i data-lucide="refresh-cw" id="commentRefreshIcon" class="w-3.5 h-3.5"></i>
-                <span>重新整理</span>
-            </button>
+            <textarea id="feedbackInput" rows="3"
+                placeholder="任何鼓勵或改善意見，都歡迎留言！"
+                class="feedback-box w-full p-3 rounded-xl outline-none resize-none transition-all duration-200"
+                style="border:1.5px solid var(--border);background:var(--surface-3);font-size:clamp(12px,3.2vw,14px);font-weight:600;color:var(--text-1);"></textarea>
+            <div class="flex justify-end gap-2 mt-2.5">
+                <button type="button" onclick="clearFeedback()"
+                    class="px-4 py-2 rounded-xl font-bold transition-all active:scale-95 flex items-center gap-1.5"
+                    style="background:var(--surface-3);border:1.5px solid var(--border);color:var(--text-2);font-size:clamp(11px,3vw,13px);">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 清除
+                </button>
+                <button type="button" onclick="submitFeedback()"
+                    class="px-5 py-2 rounded-xl font-bold text-white transition-all active:scale-95 flex items-center gap-1.5"
+                    style="background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 2px 10px rgba(124,58,237,0.3);font-size:clamp(11px,3vw,13px);">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i> 送出
+                </button>
+            </div>
         </div>
 
-        <!-- 留言列表清單 -->
-        <div id="commentListContainer" class="space-y-3 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
-            <!-- 動態渲染留言項目 -->
+        <!-- 留言區（顯示 Google Sheet「意見回饋」內容：時間、使用人、內容、回覆） -->
+        <div class="card p-4 mb-6" style="background:var(--surface);">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(245, 158, 11, 0.15));color:var(--primary);">
+                        <i data-lucide="messages-square" class="w-4 h-4"></i>
+                    </div>
+                    <h3 style="font-size:clamp(13px,3.5vw,15px);font-weight:900;color:var(--text-1);">留言區</h3>
+                    <span id="commentCountBadge" class="text-[10px] font-black px-2 py-0.5 rounded-full" style="background:var(--primary-light);color:var(--primary);">0 則</span>
+                </div>
+                <button type="button" onclick="loadFeedbackMessages(true)"
+                    class="px-2.5 py-1 rounded-xl border flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-purple-600 active:scale-95 transition-all"
+                    style="border-color:var(--border);background:var(--surface-3);" title="重新載入留言">
+                    <i data-lucide="refresh-cw" id="commentRefreshIcon" class="w-3.5 h-3.5"></i>
+                    <span>重新整理</span>
+                </button>
+            </div>
+
+            <!-- 留言列表清單 -->
+            <div id="commentListContainer" class="space-y-3 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
+                <!-- 動態渲染留言項目 -->
+            </div>
         </div>
     </div>
 
