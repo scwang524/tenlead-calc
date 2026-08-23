@@ -152,6 +152,13 @@
             -webkit-backdrop-filter: blur(20px);
             border-top: 1.5px solid var(--border);
             box-shadow: 0 -4px 24px rgba(124,58,237,0.08);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+            will-change: transform, opacity;
+        }
+        .bottom-bar.bottom-bar-hidden {
+            transform: translateY(120%) !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
 
         .section-label {
@@ -539,7 +546,7 @@
 </div>
 
 <!-- BOTTOM BAR -->
-<div class="fixed bottom-0 left-0 right-0 z-40 bottom-bar" style="padding-bottom:env(safe-area-inset-bottom);">
+<div id="bottomBar" class="fixed bottom-0 left-0 right-0 z-40 bottom-bar" style="padding-bottom:env(safe-area-inset-bottom);">
     <div class="max-w-2xl mx-auto px-3 py-3 flex items-center justify-between gap-2">
         <div class="flex gap-3 flex-wrap">
             <div class="flex flex-col">
@@ -986,10 +993,14 @@ function createRow(item, isFee = false) {
         </div>
         <div style="width:100px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
             <div class="qty-wrap">
-                <button class="qty-btn" onclick="updateQty('${item.id}', -1)">−</button>
-                <input type="number" class="qty-input" oninput="setQty('${item.id}', this.value)"
+                <button type="button" class="qty-btn" onclick="updateQty('${item.id}', -1)">−</button>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" spellcheck="false"
+                    class="qty-input"
+                    onfocus="this.select()"
+                    oninput="handleQtyInput('${item.id}', this)"
+                    onblur="handleQtyBlur('${item.id}', this)"
                     value="${qty || ''}" placeholder="0">
-                <button class="qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
+                <button type="button" class="qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
             </div>
         </div>
         <div class="row-subtotal" style="width:86px;flex-shrink:0;text-align:right;">
@@ -1000,13 +1011,7 @@ function createRow(item, isFee = false) {
     return div;
 }
 
-function updateQty(id, delta) {
-    quantities[id] = Math.max(0, (quantities[id] || 0) + delta);
-    updateRow(id);
-    updateTotals();
-}
-
-function updateRow(id) {
+function updateRowSubtotal(id) {
     const allItems = [...PRODUCT_DATA, ...FEES];
     const item = allItems.find(i => i.id === id);
     if (!item) return;
@@ -1014,8 +1019,6 @@ function updateRow(id) {
     const price = getPrice(item);
     const row = document.querySelector(`.product-row[data-id="${id}"]`);
     if (!row) return;
-    const input = row.querySelector('.qty-input');
-    if (input) input.value = qty || '';
     const subtotal = row.querySelector('.row-subtotal');
     if (subtotal) {
         const moneyEl = subtotal.querySelector('.money-font');
@@ -1030,7 +1033,45 @@ function updateRow(id) {
     }
 }
 
-function setQty(id, val) { quantities[id] = Math.max(0, parseInt(val) || 0); updateTotals(); }
+function updateQty(id, delta) {
+    quantities[id] = Math.max(0, (quantities[id] || 0) + delta);
+    updateRow(id);
+    updateTotals();
+}
+
+function updateRow(id) {
+    const qty = quantities[id] || 0;
+    const row = document.querySelector(`.product-row[data-id="${id}"]`);
+    if (row) {
+        const input = row.querySelector('.qty-input');
+        if (input) input.value = qty > 0 ? qty : '';
+    }
+    updateRowSubtotal(id);
+}
+
+function handleQtyInput(id, inputEl) {
+    const clean = inputEl.value.replace(/[^0-9]/g, '');
+    if (inputEl.value !== clean) {
+        inputEl.value = clean;
+    }
+    const val = parseInt(clean, 10) || 0;
+    quantities[id] = val;
+    updateRowSubtotal(id);
+    updateTotals();
+}
+
+function handleQtyBlur(id, inputEl) {
+    const qty = quantities[id] || 0;
+    inputEl.value = qty > 0 ? qty : '';
+    updateRowSubtotal(id);
+    updateTotals();
+}
+
+function setQty(id, val) {
+    quantities[id] = Math.max(0, parseInt(val, 10) || 0);
+    updateRow(id);
+    updateTotals();
+}
 
 function updateTotals() {
     let price = 0, pv = 0, prodQty = 0;
@@ -1411,7 +1452,58 @@ window.captureAndShare = async function() {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => { renderTable(); initQuoteMarquee(); loadFeedbackMessages(); });
+// 手機版在跳出輸入鍵盤時，自動暫時隱藏底部總金額/總PV區塊，騰出可視空間
+function initBottomBarKeyboardHandler() {
+    const bottomBar = document.getElementById('bottomBar');
+    if (!bottomBar) return;
+
+    // 監聽所有輸入焦點
+    document.addEventListener('focusin', (e) => {
+        if (!e.target) return;
+        const tag = e.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA') {
+            // 排除彈窗內的輸入，避免影響彈窗內操作
+            const inModal = e.target.closest('#summaryModal, #editCommentModal, #deleteCommentModal, #editReplyModal, #deleteReplyModal, #imagePreviewModal');
+            if (!inModal) {
+                bottomBar.classList.add('bottom-bar-hidden');
+            }
+        }
+    });
+
+    document.addEventListener('focusout', (e) => {
+        // 短暫延遲判斷是否切換到另一個輸入框
+        setTimeout(() => {
+            const active = document.activeElement;
+            const isInputActive = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+            const inModal = isInputActive && active.closest('#summaryModal, #editCommentModal, #deleteCommentModal, #editReplyModal, #deleteReplyModal, #imagePreviewModal');
+            if (!isInputActive || inModal) {
+                bottomBar.classList.remove('bottom-bar-hidden');
+            }
+        }, 120);
+    });
+
+    // 支援現代手機瀏覽器 Visual Viewport API 偵測鍵盤彈出/收起
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => {
+            const heightDiff = window.innerHeight - window.visualViewport.height;
+            if (heightDiff > 150) {
+                bottomBar.classList.add('bottom-bar-hidden');
+            } else {
+                const active = document.activeElement;
+                if (!active || (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) {
+                    bottomBar.classList.remove('bottom-bar-hidden');
+                }
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderTable();
+    initQuoteMarquee();
+    loadFeedbackMessages();
+    initBottomBarKeyboardHandler();
+});
 
 // 【新增】統一明細產生器：確保複製與截圖的內容 100% 一致
 function generateFullOrderText() {
