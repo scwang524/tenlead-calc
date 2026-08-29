@@ -307,12 +307,13 @@
             height: 30px;
             max-width: 100%;
             box-shadow: 0 2px 10px rgba(124, 58, 237, 0.08);
-            cursor: default;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: transform 0.15s ease;
         }
-        @media (hover: hover) and (pointer: fine) {
-            .quote-marquee-container:hover .quote-marquee-content {
-                animation-play-state: paused;
-            }
+        .quote-marquee-container:active {
+            transform: scale(0.99);
         }
         .quote-marquee-badge {
             display: inline-flex;
@@ -1798,6 +1799,8 @@ function getRandomQuote() {
     return TENLEAD_QUOTES[index];
 }
 
+let isQuotePaused = false;
+
 function initQuoteMarquee() {
     const el = document.getElementById('quoteMarqueeText');
     const container = el ? el.closest('.quote-marquee-container') : null;
@@ -1809,27 +1812,10 @@ function initQuoteMarquee() {
     });
 
     if (container) {
-        // 手機觸控：按住時暫停方便閱讀，放開時立即恢復滾動
-        container.addEventListener('touchstart', () => {
-            el.style.animationPlayState = 'paused';
-        }, { passive: true });
-
-        container.addEventListener('touchend', () => {
-            el.style.animationPlayState = 'running';
-        }, { passive: true });
-
-        container.addEventListener('touchcancel', () => {
-            el.style.animationPlayState = 'running';
-        }, { passive: true });
-
-        // 點擊/輕觸切換下一句語錄
+        // 點一下暫停滾動，再點一下繼續滾動
         container.addEventListener('click', () => {
-            el.innerHTML = getRandomQuote();
-            // 重啟動畫以從頭滾動
-            el.style.animation = 'none';
-            void el.offsetWidth; // 強制重繪
-            el.style.animation = 'quoteScroll 8.5s linear infinite';
-            el.style.animationPlayState = 'running';
+            isQuotePaused = !isQuotePaused;
+            el.style.animationPlayState = isQuotePaused ? 'paused' : 'running';
         });
     }
 }
@@ -2981,7 +2967,7 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
     <!-- 意見回饋（由 Google Sheet「設定」中的「意見回饋」狀態控制是否顯示在網頁上） -->
     <div id="feedbackInputCard" class="card p-4 mb-6 hidden" style="background:var(--surface);display:none;">
         <!-- 天麗語錄 跑馬燈 (置於意見回饋上方，同在大卡片內) -->
-        <div class="quote-marquee-container mb-3.5">
+        <div class="quote-marquee-container mb-3.5" title="點擊暫停／繼續滾動">
             <div class="quote-marquee-badge">
                 <i data-lucide="sparkles" class="w-3 h-3 text-white shrink-0"></i>
                 <span>天麗語錄</span>
