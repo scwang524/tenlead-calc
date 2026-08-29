@@ -361,6 +361,101 @@
             100% { transform: translateX(-100%); }
         }
 
+        /* Bulletin Board - 公佈欄 */
+        .bulletin-container {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.09), rgba(239, 68, 68, 0.06), rgba(245, 158, 11, 0.09));
+            border: 1.5px solid rgba(245, 158, 11, 0.28);
+            border-radius: 999px;
+            padding: 3px 8px;
+            overflow: hidden;
+            height: 30px;
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.08);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .bulletin-container:hover {
+            border-color: rgba(245, 158, 11, 0.6);
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.14), rgba(239, 68, 68, 0.09), rgba(245, 158, 11, 0.14));
+            box-shadow: 0 3px 12px rgba(245, 158, 11, 0.15);
+        }
+        .bulletin-container:hover .bulletin-marquee-content {
+            animation-play-state: paused;
+        }
+        .bulletin-container:active {
+            transform: scale(0.99);
+        }
+        .bulletin-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            color: white;
+            font-size: 10.5px;
+            font-weight: 900;
+            padding: 2px 8px;
+            height: 22px;
+            border-radius: 999px;
+            flex-shrink: 0;
+            margin-right: 8px;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+            line-height: 1;
+        }
+        .bulletin-track {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+        .bulletin-marquee-content {
+            display: inline-flex;
+            align-items: center;
+            height: 100%;
+            line-height: 1;
+            padding-left: 100%;
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #b45309;
+            white-space: nowrap;
+            will-change: transform;
+            animation: bulletinScroll 10.5s linear infinite;
+        }
+        @keyframes bulletinScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        .bulletin-count-tag {
+            font-size: 10px;
+            font-weight: 900;
+            color: #d97706;
+            background: rgba(245, 158, 11, 0.18);
+            border-radius: 999px;
+            padding: 1.5px 6px;
+            margin-left: 6px;
+            margin-right: 2px;
+            flex-shrink: 0;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+        .bulletin-chevron {
+            color: #d97706;
+            opacity: 0.7;
+            margin-left: 2px;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .bulletin-container:hover .bulletin-chevron {
+            opacity: 1;
+            transform: translateX(2px);
+        }
+
         /* Feedback Box & Flash */
         .feedback-box {
             transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
@@ -415,15 +510,17 @@
                 </h1>
                 <p class="text-slate-400 text-[11px] font-black tracking-[0.18em] mt-0.5 uppercase">TENLEAD CALCULATOR</p>
                 <p style="color:var(--accent);font-size:11px;font-weight:800;margin-top:2px;">靜萱 | 蔓蒂團隊 ★ 秀玲顧問</p>
-                <!-- 天麗語錄 跑馬燈 -->
-                <div class="quote-marquee-container mt-2">
-                    <div class="quote-marquee-badge">
-                        <i data-lucide="sparkles" class="w-3 h-3 text-white shrink-0"></i>
-                        <span>天麗語錄</span>
+                <!-- 公佈欄 (來自 Google Sheet「公佈欄」頁籤) -->
+                <div id="bulletinBoardContainer" class="bulletin-container mt-2.5" style="display:none;" onclick="openBulletinModal()" title="點擊查看公佈欄詳情">
+                    <div class="bulletin-badge">
+                        <i data-lucide="megaphone" class="w-3 h-3 text-white shrink-0"></i>
+                        <span>公佈欄</span>
                     </div>
-                    <div class="quote-marquee-track">
-                        <span id="quoteMarqueeText" class="quote-marquee-content"></span>
+                    <div class="bulletin-track">
+                        <span id="bulletinTickerText" class="bulletin-marquee-content"></span>
                     </div>
+                    <span id="bulletinCountTag" class="bulletin-count-tag">1/1</span>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 bulletin-chevron shrink-0"></i>
                 </div>
             </div>
 
@@ -449,7 +546,8 @@
                     <div class="flex items-center gap-2 w-full md:w-1/2">
                         <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);white-space:nowrap;flex-shrink:0;">位階：</label>
                         <select id="rankSelect" onchange="updateTotals()"
-                            style="flex:1; min-width:0; border:1.5px solid var(--border); border-radius:10px; padding:5px 8px; font-size:clamp(11px,3vw,13px); font-weight:700; color:var(--text-1); background:var(--surface-3); outline:none;">
+                            style="flex:1; min-width:0; border:1.5px solid var(--border); border-radius:10px; padding:5px 8px; font-size:clamp(11px,3vw,13px); font-weight:700; color:var(--text-1); background:var(--surface-3); outline:none;"
+                            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
                             <option value="0">新朋友</option>
                             <option value="0.25">專員 (25%)</option>
                             <option value="0.30">主任 (30%)</option>
@@ -1501,8 +1599,24 @@ function initBottomBarKeyboardHandler() {
 document.addEventListener('DOMContentLoaded', () => {
     renderTable();
     initQuoteMarquee();
+    loadBulletinMessages();
     loadFeedbackMessages();
     initBottomBarKeyboardHandler();
+
+    // 定時每 3 分鐘在背景自動檢查一次 Google Sheet 公佈欄最新訊息
+    setInterval(() => {
+        loadBulletinMessages();
+    }, 3 * 60 * 1000);
+
+    // 當手機解鎖、或從其他 App 切換回計算機時，立即在背景自動更新公佈欄
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            loadBulletinMessages();
+        }
+    });
+    window.addEventListener('focus', () => {
+        loadBulletinMessages();
+    });
 });
 
 // 【新增】統一明細產生器：確保複製與截圖的內容 100% 一致
@@ -1686,6 +1800,231 @@ function initQuoteMarquee() {
     el.addEventListener('animationiteration', () => {
         el.innerHTML = getRandomQuote();
     });
+}
+
+// ==========================
+// 公佈欄功能（讀取 Google Sheet「公佈欄」分頁）
+// ==========================
+window.allBulletinMessages = [];
+let currentBulletinIdx = 0;
+let bulletinMarqueeBound = false;
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function parseBulletinItem(item) {
+    if (!item) return null;
+    const content = String(item.content || item['內容'] || item.公告 || item['公告內容'] || item.訊息 || item.message || item.text || item.feedback || item['意見回饋'] || '').trim();
+    if (!content) return null;
+
+    const statusStr = String(item.status || item['狀態'] || '').trim().toLowerCase();
+    const isInactive = Boolean(item.isDeleted || statusStr.includes('刪除') || statusStr.includes('隱藏') || statusStr.includes('停用') || statusStr === 'off' || statusStr === '0');
+    if (isInactive) return null;
+
+    const title = String(item.title || item['標題'] || item['主題'] || '').trim();
+    const user = String(item.user || item['發佈人'] || item['發布人'] || item['發佈者'] || item['發布者'] || item['管理員'] || item.author || item['使用人'] || item['留言人'] || '').trim();
+    let time = String(item.time || item['時間'] || item['日期'] || item.timeStamp || item.date || '').trim();
+    if (time === user) time = '';
+
+    return {
+        title: title,
+        content: content,
+        user: user || '管理員',
+        time: time ? formatDisplayTime(time) : ''
+    };
+}
+
+function getBulletinDisplayText(item) {
+    if (!item) return '';
+    return item.title ? `【${item.title}】${item.content}` : item.content;
+}
+
+function updateBulletinCountTag() {
+    const countTag = document.getElementById('bulletinCountTag');
+    if (!countTag) return;
+    const list = window.allBulletinMessages || [];
+    if (list.length > 0) {
+        countTag.innerText = `${currentBulletinIdx + 1}/${list.length}`;
+        countTag.style.display = 'inline-block';
+    } else {
+        countTag.style.display = 'none';
+    }
+}
+
+function renderBulletinBar() {
+    const container = document.getElementById('bulletinBoardContainer');
+    const tickerEl = document.getElementById('bulletinTickerText');
+    if (!container || !tickerEl) return;
+
+    const list = window.allBulletinMessages || [];
+    if (list.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'flex';
+    updateBulletinCountTag();
+
+    // 只有當尚未有內容時才進行初始填入，避免正在跑馬燈滾動時被背景請求切斷
+    if (!tickerEl.innerHTML || tickerEl.innerHTML.trim() === '') {
+        currentBulletinIdx = 0;
+        tickerEl.innerHTML = getBulletinDisplayText(list[0]);
+        updateBulletinCountTag();
+    }
+
+    if (!bulletinMarqueeBound) {
+        bulletinMarqueeBound = true;
+        tickerEl.addEventListener('animationiteration', () => {
+            const currentList = window.allBulletinMessages || [];
+            if (currentList.length <= 1) {
+                updateBulletinCountTag();
+                return;
+            }
+            currentBulletinIdx = (currentBulletinIdx + 1) % currentList.length;
+            tickerEl.innerHTML = getBulletinDisplayText(currentList[currentBulletinIdx]);
+            updateBulletinCountTag();
+        });
+    }
+}
+
+let lastBulletinFetchTime = 0;
+
+async function loadBulletinMessages(forceRefresh = false) {
+    const now = Date.now();
+    if (!forceRefresh && (now - lastBulletinFetchTime < 10000)) {
+        return; // 10 秒內防頻繁重複呼叫
+    }
+    lastBulletinFetchTime = now;
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+    
+    // 1. 先嘗試讀取本地快取（秒開體驗）
+    try {
+        const cached = localStorage.getItem('tenlead_bulletin_cache');
+        if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                window.allBulletinMessages = parsed;
+                renderBulletinBar();
+            }
+        }
+    } catch (_) {}
+
+    // 2. 從 Google Sheet「公佈欄」分頁非同步抓取最新公告
+    try {
+        const resp = await fetch(`${scriptURL}?action=getBulletin&sheetName=${encodeURIComponent('公佈欄')}&t=${Date.now()}`);
+        if (resp.ok) {
+            const resJson = await resp.json();
+            if (resJson && resJson.status === 'success') {
+                // 檢查 Google Sheet 設定中是否有公佈欄開關
+                if (resJson.settings) {
+                    for (const k in resJson.settings) {
+                        const key = String(k).toLowerCase().trim();
+                        const val = String(resJson.settings[k]).toLowerCase().trim();
+                        const isOff = ['關閉', '隱藏', '停用', 'false', '0', 'n', 'no', 'off', '不顯示', 'x'].includes(val);
+                        if (key.includes('公佈') || key.includes('公告') || key.includes('bulletin')) {
+                            if (isOff) {
+                                window.allBulletinMessages = [];
+                                renderBulletinBar();
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                if (Array.isArray(resJson.data)) {
+                    const validItems = resJson.data
+                        .map(parseBulletinItem)
+                        .filter(Boolean);
+
+                    window.allBulletinMessages = validItems;
+                    try {
+                        localStorage.setItem('tenlead_bulletin_cache', JSON.stringify(validItems));
+                    } catch (_) {}
+                    renderBulletinBar();
+                    
+                    // 如果公佈欄彈窗目前開啟中，同步更新彈窗內容
+                    const modal = document.getElementById('bulletinModal');
+                    if (modal && !modal.classList.contains('hidden')) {
+                        renderBulletinModalList();
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("從 Google Sheet 讀取公佈欄失敗，使用本地快取：", e);
+    }
+}
+
+// 公佈欄 Modal 操作
+window.openBulletinModal = function() {
+    const modal = document.getElementById('bulletinModal');
+    if (!modal) return;
+    renderBulletinModalList();
+    modal.classList.remove('hidden');
+    if (window.lucide) window.lucide.createIcons();
+    // 點擊打開彈窗時，自動在背景同步確認最新公告
+    loadBulletinMessages(true);
+};
+
+window.closeBulletinModal = function() {
+    const modal = document.getElementById('bulletinModal');
+    if (modal) modal.classList.add('hidden');
+};
+
+function renderBulletinModalList() {
+    const listEl = document.getElementById('bulletinModalList');
+    const subtitleEl = document.getElementById('bulletinModalSubtitle');
+    if (!listEl) return;
+
+    const list = window.allBulletinMessages || [];
+    if (subtitleEl) {
+        subtitleEl.innerText = list.length > 0 ? `共 ${list.length} 則最新公告訊息` : '目前暫無公告';
+    }
+
+    if (list.length === 0) {
+        listEl.innerHTML = `
+            <div class="text-center py-8 text-slate-400">
+                <div class="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center" style="background:rgba(245,158,11,0.1);color:#d97706;">
+                    <i data-lucide="bell-off" class="w-5 h-5"></i>
+                </div>
+                <p class="text-[13px] font-bold">目前尚無公佈欄訊息</p>
+            </div>
+        `;
+        if (window.lucide) window.lucide.createIcons();
+        return;
+    }
+
+    listEl.innerHTML = list.map((item, idx) => {
+        const titleHtml = item.title ? `<div class="font-black text-[14px] text-slate-800 mb-1 leading-snug">${escapeHtml(item.title)}</div>` : '';
+        const userHtml = item.user ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold" style="background:rgba(245,158,11,0.15);color:#b45309;"><i data-lucide="megaphone" class="w-3 h-3"></i>${escapeHtml(item.user)}</span>` : '';
+        const timeHtml = item.time ? `<span class="text-[11px] font-bold text-slate-400 flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>${escapeHtml(item.time)}</span>` : '';
+
+        return `
+            <div class="p-3.5 rounded-2xl border transition-all" style="background:var(--surface-2);border-color:var(--border);">
+                <div class="flex items-center justify-between gap-2 mb-2 flex-wrap">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white shrink-0" style="background:linear-gradient(135deg,#f59e0b,#ea580c);box-shadow:0 1px 4px rgba(245,158,11,0.3);">
+                            ${idx + 1}
+                        </span>
+                        ${userHtml}
+                    </div>
+                    ${timeHtml}
+                </div>
+                ${titleHtml}
+                <div class="text-[13px] font-semibold text-slate-700 leading-relaxed whitespace-pre-wrap pl-1" style="word-break: break-word;">${escapeHtml(item.content)}</div>
+            </div>
+        `;
+    }).join('');
+
+    if (window.lucide) window.lucide.createIcons();
 }
 
 // 意見回饋與留言區功能
@@ -2609,6 +2948,17 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
 <footer class="max-w-2xl mx-auto px-4 pb-32 pt-10">
     <!-- 意見回饋（由 Google Sheet「設定」中的「意見回饋」狀態控制是否顯示在網頁上） -->
     <div id="feedbackInputCard" class="card p-4 mb-6 hidden" style="background:var(--surface);display:none;">
+        <!-- 天麗語錄 跑馬燈 (置於意見回饋上方，同在大卡片內) -->
+        <div class="quote-marquee-container mb-3.5">
+            <div class="quote-marquee-badge">
+                <i data-lucide="sparkles" class="w-3 h-3 text-white shrink-0"></i>
+                <span>天麗語錄</span>
+            </div>
+            <div class="quote-marquee-track">
+                <span id="quoteMarqueeText" class="quote-marquee-content"></span>
+            </div>
+        </div>
+
         <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
                 <div class="w-7 h-7 rounded-xl flex items-center justify-center" style="background:var(--primary-light);color:var(--primary);">
@@ -2824,6 +3174,41 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
                 style="background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 2px 8px rgba(239,68,68,0.3);">
                 <i data-lucide="trash" class="w-3.5 h-3.5"></i>
                 確定刪除
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 公佈欄詳情 Modal -->
+<div id="bulletinModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4"
+    style="background:rgba(30,27,46,0.65);backdrop-filter:blur(6px);"
+    onclick="if(event.target === this) closeBulletinModal()">
+    <div class="bg-white w-full max-w-md shadow-2xl rounded-3xl p-5 transform transition-all flex flex-col max-h-[85vh]" style="border:1px solid var(--border);">
+        <div class="flex items-center justify-between pb-3 border-b" style="border-color:var(--border);">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-white shrink-0" style="background:linear-gradient(135deg,#f59e0b,#ea580c);box-shadow:0 2px 8px rgba(245,158,11,0.3);">
+                    <i data-lucide="megaphone" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-[15px] leading-none" style="color:var(--text-1);">最新公佈欄</h3>
+                    <p id="bulletinModalSubtitle" class="text-[11px] font-bold text-slate-400 mt-1">官方最新公告與消息</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeBulletinModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition-all">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- 公告內容列表 (可滾動) -->
+        <div id="bulletinModalList" class="my-3 space-y-3 overflow-y-auto pr-1 custom-scrollbar flex-1">
+            <!-- 動態渲染公告項目 -->
+        </div>
+
+        <div class="pt-2 border-t flex justify-end" style="border-color:var(--border);">
+            <button type="button" onclick="closeBulletinModal()"
+                class="w-full py-2.5 rounded-xl text-[13px] font-bold text-white transition-all active:scale-95 flex items-center justify-center gap-1.5"
+                style="background:linear-gradient(135deg,#f59e0b,#ea580c);box-shadow:0 2px 10px rgba(245,158,11,0.3);">
+                關閉
             </button>
         </div>
     </div>
