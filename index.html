@@ -1605,24 +1605,27 @@ function initBottomBarKeyboardHandler() {
 
 document.addEventListener('DOMContentLoaded', () => {
     renderTable();
-    initQuoteMarquee();
+    loadQuotesFromSheet();
     loadBulletinMessages();
     loadFeedbackMessages();
     initBottomBarKeyboardHandler();
 
-    // 定時每 3 分鐘在背景自動檢查一次 Google Sheet 公佈欄最新訊息
+    // 定時每 3 分鐘在背景自動檢查一次 Google Sheet 公佈欄與天麗語錄最新訊息
     setInterval(() => {
         loadBulletinMessages();
+        loadQuotesFromSheet();
     }, 3 * 60 * 1000);
 
-    // 當手機解鎖、或從其他 App 切換回計算機時，立即在背景自動更新公佈欄
+    // 當手機解鎖、或從其他 App 切換回計算機時，立即在背景自動更新公佈欄與天麗語錄
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
             loadBulletinMessages();
+            loadQuotesFromSheet();
         }
     });
     window.addEventListener('focus', () => {
         loadBulletinMessages();
+        loadQuotesFromSheet();
     });
 });
 
@@ -1774,49 +1777,105 @@ async function uploadToSheet(fullText) {
     }
 }
 
-// 天麗語錄清單
-const TENLEAD_QUOTES = [
-    "多一人 美麗、少一人 憂鬱。",
-    "認真使用、熱情分享。",
-    "我要 健康 + 美麗 + 財富 = 三財一生。",
-    "用天麗～ 你最美！",
-    "斜桿事業、人生的第二春。",
-    "保養、首重清潔。",
-    "早用、早美麗。",
-    "配合度、就是滿意度。",
-    "我們在一起，就是了不起！",
-    "要 定期調單 喔。",
-    "一分鐘 防曬、剩過 24小時美白。"
-];
-
+// ==========================
+// 天麗語錄功能（100% 讀取 Google Sheet「天麗語錄」頁籤與本地快取）
+// ==========================
+window.allTenleadQuotes = [];
 let lastQuoteIndex = -1;
+let isQuotePaused = false;
+let quoteMarqueeBound = false;
+let lastQuotesFetchTime = 0;
+
 function getRandomQuote() {
+    const list = window.allTenleadQuotes || [];
+    if (list.length === 0) return '';
     let index;
     do {
-        index = Math.floor(Math.random() * TENLEAD_QUOTES.length);
-    } while (index === lastQuoteIndex && TENLEAD_QUOTES.length > 1);
+        index = Math.floor(Math.random() * list.length);
+    } while (index === lastQuoteIndex && list.length > 1);
     lastQuoteIndex = index;
-    return TENLEAD_QUOTES[index];
+    return list[index];
 }
 
-let isQuotePaused = false;
-
-function initQuoteMarquee() {
+function renderQuoteMarquee() {
+    const container = document.getElementById('quoteMarqueeContainer') || document.querySelector('.quote-marquee-container');
     const el = document.getElementById('quoteMarqueeText');
-    const container = el ? el.closest('.quote-marquee-container') : null;
-    if (!el) return;
-    el.innerHTML = TENLEAD_QUOTES[0];
-    lastQuoteIndex = 0;
-    el.addEventListener('animationiteration', () => {
-        el.innerHTML = getRandomQuote();
-    });
+    if (!container || !el) return;
 
-    if (container) {
+    const list = window.allTenleadQuotes || [];
+    if (list.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'flex';
+
+    if (!el.innerHTML || el.innerHTML.trim() === '') {
+        el.innerHTML = getRandomQuote();
+    }
+
+    if (!quoteMarqueeBound) {
+        quoteMarqueeBound = true;
+        el.addEventListener('animationiteration', () => {
+            const currentList = window.allTenleadQuotes || [];
+            if (currentList.length <= 1) return;
+            el.innerHTML = getRandomQuote();
+        });
+
         // 點一下暫停滾動，再點一下繼續滾動
         container.addEventListener('click', () => {
             isQuotePaused = !isQuotePaused;
             el.style.animationPlayState = isQuotePaused ? 'paused' : 'running';
         });
+    }
+}
+
+async function loadQuotesFromSheet(forceRefresh = false) {
+    const now = Date.now();
+    if (!forceRefresh && (now - lastQuotesFetchTime < 10000)) {
+        return; // 10 秒內防頻繁重複呼叫
+    }
+    lastQuotesFetchTime = now;
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzT5XoEoeIa0bpZfRx769EMv-V-XcpVymPRgJD4og3mzzrefRylISbJu_I61z3fFCYw/exec';
+
+    // 1. 先嘗試讀取本地快取（秒開體驗）
+    try {
+        const cached = localStorage.getItem('tenlead_quotes_cache');
+        if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                window.allTenleadQuotes = parsed;
+                renderQuoteMarquee();
+            }
+        }
+    } catch (_) {}
+
+    // 2. 從 Google Sheet「天麗語錄」分頁非同步抓取最新語錄
+    try {
+        const resp = await fetch(`${scriptURL}?action=getQuotes&sheetName=${encodeURIComponent('天麗語錄')}&t=${Date.now()}`);
+        if (resp.ok) {
+            const resJson = await resp.json();
+            if (resJson && resJson.status === 'success' && Array.isArray(resJson.data)) {
+                const validQuotes = resJson.data
+                    .map(item => {
+                        if (!item) return '';
+                        const content = String(item.content || item['內容'] || item.quote || item.text || '').trim();
+                        const statusStr = String(item.status || item['狀態'] || '').trim().toLowerCase();
+                        const isInactive = Boolean(item.isDeleted || statusStr.includes('刪除') || statusStr.includes('隱藏') || statusStr.includes('停用') || statusStr === 'off' || statusStr === '0' || content.includes('[已刪除]'));
+                        return isInactive ? '' : content;
+                    })
+                    .filter(c => c.length > 0);
+
+                window.allTenleadQuotes = validQuotes;
+                try {
+                    localStorage.setItem('tenlead_quotes_cache', JSON.stringify(validQuotes));
+                } catch (_) {}
+                renderQuoteMarquee();
+            }
+        }
+    } catch (e) {
+        console.warn("從 Google Sheet 讀取天麗語錄失敗，使用本地快取：", e);
     }
 }
 
@@ -2966,8 +3025,8 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
 <footer class="max-w-2xl mx-auto px-4 pb-32 pt-10">
     <!-- 意見回饋（由 Google Sheet「設定」中的「意見回饋」狀態控制是否顯示在網頁上） -->
     <div id="feedbackInputCard" class="card p-4 mb-6 hidden" style="background:var(--surface);display:none;">
-        <!-- 天麗語錄 跑馬燈 (置於意見回饋上方，同在大卡片內) -->
-        <div class="quote-marquee-container mb-3.5" title="點擊暫停／繼續滾動">
+        <!-- 天麗語錄 跑馬燈 (置於意見回饋上方，同在大卡片內，來自 Google Sheet「天麗語錄」頁籤) -->
+        <div id="quoteMarqueeContainer" class="quote-marquee-container mb-3.5" style="display:none;" title="點擊暫停／繼續滾動">
             <div class="quote-marquee-badge">
                 <i data-lucide="sparkles" class="w-3 h-3 text-white shrink-0"></i>
                 <span>天麗語錄</span>
