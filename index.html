@@ -998,6 +998,7 @@ function calculateGiftQty(pv) {
 
 window.resetAll = function() {
     quantities = {};
+    window.lastDataKey = "";
     const inp = document.getElementById('searchInput');
     if (inp) inp.value = '';
     document.getElementById('ordererInput').value = '';
@@ -1310,6 +1311,10 @@ function toggleSummary(show) {
             } else {
                 bonusSec.classList.add('hidden');
             }
+
+            // 按下打開「訂單明細」時觸發計次上傳（內部會自動比對訂單內容，若無變動則防止重複計次）
+            const text = generateFullOrderText();
+            uploadToSheet(text);
         }
         modal.classList.remove('hidden');
         if (window.lucide) window.lucide.createIcons();
@@ -1324,9 +1329,6 @@ window.copyToClipboard = function() {
 
     // 直接呼叫產生器
     const text = generateFullOrderText();
-    
-    // 上傳至 Google Sheet
-    uploadToSheet(text);
 
     // 複製到剪貼簿
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1493,10 +1495,6 @@ window.closeImagePreview = function() {
 window.captureAndShare = async function() {
     const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
     if (activeItems.length === 0) { showMessage('清單為空，無法截圖'); return; }
-
-    // 【修正點】讓截圖上傳的文字內容與複製內容完全同步
-    const textForUpload = generateFullOrderText();
-    uploadToSheet(textForUpload);
 
     const overlay = document.getElementById('screenshotOverlay');
     overlay.classList.add('active');
@@ -1723,20 +1721,27 @@ function getDeviceType() {
 
 // 3. 修改後的函式：接收外部傳入的文字
 async function uploadToSheet(fullText) {
+    const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
+    if (activeItems.length === 0) return;
+
     const orderer = getOrderer();
     const rank = getRankInfo().label;
-    const dataKey = JSON.stringify(quantities) + orderer + rank;
-    const nowTs = Date.now();
 
-    // 3 秒內防重複點擊攔截，3 秒後或內容變動均可再次上傳
-    if (dataKey === window.lastDataKey && (nowTs - (window.lastUploadTime || 0)) < 3000) {
-        console.log("3秒內重複觸發，攔截重複上傳");
+    // 依據非零商品項目與數量、訂購人、位階、幣別建立唯一訂單特徵值
+    const activeEntries = Object.entries(quantities).filter(([_, v]) => v > 0).sort((a, b) => a[0].localeCompare(b[0]));
+    const dataKey = JSON.stringify(activeEntries) + '|' + orderer + '|' + rank + '|' + currentCurrency;
+
+    // 只要訂單內容沒有改變，不管間隔幾秒，一律防止重複上傳計次
+    if (dataKey === window.lastDataKey) {
+        console.log("訂單內容未變更，防止重複上傳計次");
         return; 
     }
-    window.lastUploadTime = nowTs;
     window.lastDataKey = dataKey;
 
-    const activeItems = [...PRODUCT_DATA, ...FEES].filter(i => (quantities[i.id] || 0) > 0);
+    if (!fullText) {
+        fullText = generateFullOrderText();
+    }
+
     const shortSummary = activeItems.map(i => `${i.name}${i.alias ? '(' + i.alias + ')' : ''} x${quantities[i.id]}`).join('、');
 
     const formattedDetails = shortSummary ? `【${shortSummary}】\n${fullText}` : fullText;
@@ -3111,7 +3116,7 @@ async function uploadFeedbackToSheet(feedbackText, timeStr, userStr) {
                 
                 <section>
                     <b style="color: #64748b;">二、數據收集與自動化紀錄</b><br>
-                    為優化使用者體驗及統計數據流量，當執行「複製明細」或「截圖」指令時，本系統將自動進行去識別化處理，同步紀錄包括但不限於：裝置指紋編號、瀏覽器環境、訂單項目及計算結果。
+                    為優化使用者體驗及統計數據流量，當開啟「訂單明細」時，本系統將自動進行去識別化處理，同步紀錄包括但不限於：裝置指紋編號、瀏覽器環境、訂單項目及計算結果。
                 </section>
                 
                 <section>
