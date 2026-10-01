@@ -626,13 +626,9 @@
             <!-- 平日版資訊區（填上各個位階的回饋%） -->
             <div id="regularPromoArea" class="mt-3 space-y-2">
                 <p id="regularHeaderTitle" style="color:var(--primary);font-size:clamp(11px,3vw,13px);font-weight:900;" class="flex items-center gap-1">
-                    <i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>【平日版日常方案】依位階享有業績獎金回饋
+                    <i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>依〈位階〉享有「業績獎金」回饋％
                 </p>
                 <div id="regularRankCard" style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:14px;padding:11px 13px;">
-                    <p style="color:#6d28d9;font-size:clamp(10px,2.8vw,12px);font-weight:900;margin-bottom:6px;" class="flex items-center gap-1.5">
-                        <i data-lucide="award" class="w-3.5 h-3.5 shrink-0" style="color:#7c3aed;"></i>
-                        <span>💎【各個位階回饋 %】</span>
-                    </p>
                     <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:4px 10px;" class="sm:grid-cols-4">
                         <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">專員：</span>25%</span>
                         <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">主任：</span>30%</span>
@@ -641,7 +637,7 @@
                         <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">鑽石：</span>38%</span>
                         <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">金鑽：</span>39%</span>
                         <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">顧問：</span>40%</span>
-                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">新朋友：</span>滿 2.8萬 PV 晉升專員</span>
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">新朋友：</span>超過2.8萬PV → 專員</span>
                     </div>
                 </div>
             </div>
@@ -1046,7 +1042,7 @@ function getBonusInfo(rank, pv) {
     let promoNoticeText = '';
 
     if (rank.label === '新朋友') {
-        if (pv >= 28000) {
+        if (pv >= 28001) {
             isEligible = true;
             isPromoted = true;
             const eligiblePV = pv - 28000;
@@ -1054,17 +1050,13 @@ function getBonusInfo(rank, pv) {
                 ? Math.round((eligiblePV * 0.25) / 6.5) 
                 : Math.round(eligiblePV * 0.25);
             
-            rankText = `新朋友 (🎉 恭喜晉升「專員」)`;
+            rankText = `新朋友 ➔ 晉升專員 (25%)`;
             shortRankText = `新朋友 ➔ 晉升專員 🎉`;
-            promoNoticeText = `🎉 本單滿 2.8萬 PV 達標，恭喜晉升「專員」資格！`;
+            promoNoticeText = `🎉 本單超過 2.8萬 PV，恭喜晉升「專員」資格！`;
 
-            if (pv > 28000) {
-                formulaText = currentCurrency === 'MYR'
-                    ? `計算式：（${pv.toLocaleString()} - 28,000）PV × 25% ÷ 6.5 = ${formatMoney(bonus)}`
-                    : `計算式：（${pv.toLocaleString()} - 28,000）PV × 25% = ${formatMoney(bonus)}`;
-            } else {
-                formulaText = `已滿 2.8萬 PV 達標晉升專員（本次業績獎金 ${formatMoney(0)}）`;
-            }
+            formulaText = currentCurrency === 'MYR'
+                ? `計算式：（${pv.toLocaleString()} - 28,000）PV × 25% ÷ 6.5 = ${formatMoney(bonus)}`
+                : `計算式：（${pv.toLocaleString()} - 28,000）PV × 25% = ${formatMoney(bonus)}`;
         }
     } else if (rank.value > 0) {
         isEligible = true;
