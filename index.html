@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>2026 天麗生技 17週年慶特惠</title>
+    <title id="pageTitle">天麗✪計算機</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -215,6 +215,34 @@
             background: linear-gradient(135deg, #7c3aed, #6d28d9);
             color: white;
             box-shadow: 0 2px 8px rgba(124,58,237,0.3);
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 5px 6px;
+            border-radius: 9px;
+            font-size: clamp(10px, 2.7vw, 12px);
+            font-weight: 900;
+            color: var(--text-2);
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .mode-btn.active {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            color: white;
+            box-shadow: 0 2px 8px rgba(234,88,12,0.35);
+        }
+        #btnModeAnniversary.active {
+            background: linear-gradient(135deg, #e11d48, #be123c);
+            color: white;
+            box-shadow: 0 2px 8px rgba(225,29,72,0.35);
+        }
+        #btnModeRegular.active {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            color: white;
+            box-shadow: 0 2px 8px rgba(234,88,12,0.35);
         }
 
         /* Screenshot loading overlay */
@@ -531,13 +559,23 @@
                 <i data-lucide="chevron-right" class="w-3.5 h-3.5 bulletin-chevron shrink-0"></i>
             </div>
 
-            <!-- 控制欄位區域（幣別獨立一排，訂購人與位階維持原樣並排） -->
+            <!-- 控制欄位區域（版本與幣別切換、訂購人與位階） -->
             <div class="mt-4 flex flex-col gap-3 text-left">
-                <div class="flex items-center gap-2">
-                    <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);white-space:nowrap;flex-shrink:0;">計價幣別：</label>
-                    <div class="currency-toggle" style="width:240px;max-width:100%;">
-                        <button type="button" id="btnCurrTWD" onclick="setCurrency('TWD')" class="currency-btn active">🇹🇼 台幣 (NT$)</button>
-                        <button type="button" id="btnCurrMYR" onclick="setCurrency('MYR')" class="currency-btn">🇲🇾 馬幣 (RM)</button>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);white-space:nowrap;flex-shrink:0;">活動版本：</label>
+                        <div class="currency-toggle" style="width:260px;max-width:100%;">
+                            <button type="button" id="btnModeRegular" onclick="setAppMode('regular')" class="mode-btn active">☀️ 平日版</button>
+                            <button type="button" id="btnModeAnniversary" onclick="setAppMode('anniversary')" class="mode-btn">🎉 週年慶版</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);white-space:nowrap;flex-shrink:0;">計價幣別：</label>
+                        <div class="currency-toggle" style="width:260px;max-width:100%;">
+                            <button type="button" id="btnCurrTWD" onclick="setCurrency('TWD')" class="currency-btn active">台幣 (NT$)</button>
+                            <button type="button" id="btnCurrMYR" onclick="setCurrency('MYR')" class="currency-btn">國際版 (馬幣RM）</button>
+                        </div>
                     </div>
                 </div>
 
@@ -567,11 +605,13 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-3 space-y-2">
-                <p style="color:var(--rose);font-size:clamp(11px,3vw,13px);font-weight:900;" class="flex items-center gap-1">
+
+            <!-- 週年慶特惠版資訊區 -->
+            <div id="anniversaryPromoArea" class="mt-3 space-y-2" style="display:none;">
+                <p id="anniversaryHeaderTitle" style="color:var(--rose);font-size:clamp(11px,3vw,13px);font-weight:900;" class="flex items-center gap-1">
                     <i data-lucide="calendar" class="w-4 h-4 shrink-0"></i> 2026【17週年慶特惠】9/5(六) ～ 9/16(三)
                 </p>
-                <div style="background:var(--rose-light);border:1px solid #fecdd3;border-radius:14px;padding:10px 12px;">
+                <div id="anniversaryPromoCard" style="background:var(--rose-light);border:1px solid #fecdd3;border-radius:14px;padding:10px 12px;">
                     <p style="color:#be123c;font-size:clamp(10px,2.8vw,12px);font-weight:900;margin-bottom:4px;">🎁【消費回饋 / 贈品方案】</p>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;">
                         <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">1.9萬 PV：</span>2號</span>
@@ -581,6 +621,33 @@
                         <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:#e11d48;"><span style="color:var(--text-1);">20萬 PV：</span>5.2萬 天麗幣 (扭蛋抽獎券x2)</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- 平日版資訊區（填上各個位階的回饋%） -->
+            <div id="regularPromoArea" class="mt-3 space-y-2">
+                <p id="regularHeaderTitle" style="color:var(--primary);font-size:clamp(11px,3vw,13px);font-weight:900;" class="flex items-center gap-1">
+                    <i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>【平日版日常方案】依位階享有業績獎金回饋
+                </p>
+                <div id="regularRankCard" style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:14px;padding:11px 13px;">
+                    <p style="color:#6d28d9;font-size:clamp(10px,2.8vw,12px);font-weight:900;margin-bottom:6px;" class="flex items-center gap-1.5">
+                        <i data-lucide="award" class="w-3.5 h-3.5 shrink-0" style="color:#7c3aed;"></i>
+                        <span>💎【各個位階回饋 %】</span>
+                    </p>
+                    <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:4px 10px;" class="sm:grid-cols-4">
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">專員：</span>25%</span>
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">主任：</span>30%</span>
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">經理：</span>35%</span>
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">寶石：</span>37%</span>
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">鑽石：</span>38%</span>
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">金鑽：</span>39%</span>
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">顧問：</span>40%</span>
+                        <span style="font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--text-1);"><span style="color:#7c3aed;font-weight:900;">新朋友：</span>滿 2.8萬 PV 晉升專員</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 保健系列專案：買 8 送 1（僅週年慶版顯示） -->
+            <div id="healthPromoNote" class="mt-2" style="display:none;">
                 <p style="color:var(--green);font-size:clamp(11px,3vw,13px);font-weight:800;" class="flex items-center gap-1">
                     <i data-lucide="leaf" class="w-4 h-4 shrink-0"></i> 保健系列專案：買 8 送 1 (限同品項)
                 </p>
@@ -853,6 +920,8 @@ function formatMoney(amount) {
     return `$${amount.toLocaleString()}`;
 }
 
+let currentAppMode = 'regular'; // 預設為「平日版」
+
 window.setCurrency = function(curr) {
     if (currentCurrency === curr) return;
     currentCurrency = curr;
@@ -868,7 +937,42 @@ window.setCurrency = function(curr) {
         }
     }
     renderTable();
-    showMessage(`已切換幣別為：${curr === 'MYR' ? '🇲🇾 馬幣 (RM)' : '🇹🇼 台幣 (NT$)'}`);
+    showMessage(`已切換幣別為：${curr === 'MYR' ? '國際版 (馬幣RM）' : '台幣 (NT$)'}`);
+};
+
+window.setAppMode = function(mode) {
+    if (currentAppMode === mode) return;
+    currentAppMode = mode;
+    
+    const btnAnniversary = document.getElementById('btnModeAnniversary');
+    const btnRegular = document.getElementById('btnModeRegular');
+    const annivArea = document.getElementById('anniversaryPromoArea');
+    const regularArea = document.getElementById('regularPromoArea');
+    const healthNote = document.getElementById('healthPromoNote');
+    const pageTitle = document.getElementById('pageTitle');
+
+    if (mode === 'regular') {
+        if (btnRegular) btnRegular.classList.add('active');
+        if (btnAnniversary) btnAnniversary.classList.remove('active');
+        if (annivArea) annivArea.style.display = 'none';
+        if (regularArea) regularArea.style.display = 'block';
+        if (healthNote) healthNote.style.display = 'none';
+        document.title = '天麗生技 計算機 (平日版)';
+        if (pageTitle) pageTitle.innerText = '天麗生技 計算機 (平日版)';
+        showMessage('已切換模式為：☀️ 平日版');
+    } else {
+        if (btnAnniversary) btnAnniversary.classList.add('active');
+        if (btnRegular) btnRegular.classList.remove('active');
+        if (annivArea) annivArea.style.display = 'block';
+        if (regularArea) regularArea.style.display = 'none';
+        if (healthNote) healthNote.style.display = 'block';
+        document.title = '2026 天麗生技 17週年慶特惠';
+        if (pageTitle) pageTitle.innerText = '2026 天麗生技 17週年慶特惠';
+        showMessage('已切換模式為：🎉 週年慶版');
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    updateTotals();
 };
 
 const RANK_OPTIONS = [
@@ -979,20 +1083,23 @@ function getBonusInfo(rank, pv) {
 
 function calculateGiftQty(pv) {
     let giftCount = 0;
-    const activePromo = PROMOS.find(p => pv >= p.threshold);
-    if (activePromo) {
-        // 10萬及20萬PV贈品為天麗幣及扭蛋抽獎券（非實體），不計入贈品件數
-        if (activePromo.threshold === 50000) giftCount += 3;
-        else if (activePromo.threshold === 32000) giftCount += 2;
-        else if (activePromo.threshold === 19000) giftCount += 1;
-    }
-    PRODUCT_DATA.filter(p => p.isHealth).forEach(p => {
-        const qty = quantities[p.id] || 0;
-        if (qty >= 8) {
-            const sets = Math.floor(qty / 8);
-            giftCount += sets; // 買8送1 (限同品項)
+    // 平日版無任何活動贈品與買8送1，僅週年慶版計算
+    if (currentAppMode === 'anniversary') {
+        const activePromo = PROMOS.find(p => pv >= p.threshold);
+        if (activePromo) {
+            // 10萬及20萬PV贈品為天麗幣及扭蛋抽獎券（非實體），不計入贈品件數
+            if (activePromo.threshold === 50000) giftCount += 3;
+            else if (activePromo.threshold === 32000) giftCount += 2;
+            else if (activePromo.threshold === 19000) giftCount += 1;
         }
-    });
+        PRODUCT_DATA.filter(p => p.isHealth).forEach(p => {
+            const qty = quantities[p.id] || 0;
+            if (qty >= 8) {
+                const sets = Math.floor(qty / 8);
+                giftCount += sets; // 買8送1 (限同品項)
+            }
+        });
+    }
     return giftCount;
 }
 
@@ -1198,7 +1305,7 @@ function updateTotals() {
     updateSectionBadge('health', healthCount);
     updateSectionBadge('fee', feeCount);
 
-    const activePromo = PROMOS.find(p => pv >= p.threshold);
+    const activePromo = (currentAppMode === 'anniversary') ? PROMOS.find(p => pv >= p.threshold) : null;
     const noticeEl = document.getElementById('promoNotice');
     noticeEl.innerText = activePromo ? `🎁 已達標：${activePromo.desc}` : '';
 
@@ -1268,7 +1375,7 @@ function toggleSummary(show) {
                 content.appendChild(tr);
             });
 
-            const promo = PROMOS.find(p => currentPV >= p.threshold);
+            const promo = (currentAppMode === 'anniversary') ? PROMOS.find(p => currentPV >= p.threshold) : null;
             const promoSec = document.getElementById('modalPromoSection');
             if (promo) {
                 promoSec.classList.remove('hidden');
@@ -1277,19 +1384,21 @@ function toggleSummary(show) {
                 promoSec.classList.add('hidden');
             }
 
-            PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] || 0) >= 8).forEach(p => {
-                const giftQty = Math.floor(quantities[p.id] / 8);
-                const trGift = document.createElement('tr');
-                trGift.style.cssText = 'background:#f0fdf4;border-bottom:1px solid #bbf7d0;';
-                trGift.innerHTML = `
-                    <td style="padding:10px 20px;color:#059669;font-weight:900;font-size:var(--sub-size);display:flex;align-items:center;gap:4px;">
-                        <i data-lucide="arrow-right-to-line" class="w-4 h-4 shrink-0"></i> 贈：${p.name} (買8送1)
-                    </td>
-                    <td style="padding:10px 8px;text-align:center;color:#059669;font-weight:900;font-size:var(--sub-size);">×${giftQty}</td>
-                    <td style="padding:10px 20px;text-align:right;color:#059669;font-weight:900;font-size:var(--sub-size);font-style:italic;">FREE</td>
-                `;
-                content.appendChild(trGift);
-            });
+            if (currentAppMode === 'anniversary') {
+                PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] || 0) >= 8).forEach(p => {
+                    const giftQty = Math.floor(quantities[p.id] / 8);
+                    const trGift = document.createElement('tr');
+                    trGift.style.cssText = 'background:#f0fdf4;border-bottom:1px solid #bbf7d0;';
+                    trGift.innerHTML = `
+                        <td style="padding:10px 20px;color:#059669;font-weight:900;font-size:var(--sub-size);display:flex;align-items:center;gap:4px;">
+                            <i data-lucide="arrow-right-to-line" class="w-4 h-4 shrink-0"></i> 贈：${p.name} (買8送1)
+                        </td>
+                        <td style="padding:10px 8px;text-align:center;color:#059669;font-weight:900;font-size:var(--sub-size);">×${giftQty}</td>
+                        <td style="padding:10px 20px;text-align:right;color:#059669;font-weight:900;font-size:var(--sub-size);font-style:italic;">FREE</td>
+                    `;
+                    content.appendChild(trGift);
+                });
+            }
 
             const bonusSec = document.getElementById('modalBonusSection');
             const bInfo = getBonusInfo(rank, currentPV);
@@ -1367,11 +1476,13 @@ function buildSnapshotHTML() {
         totalPrice += price * qty;
         if (!item.isFee) { totalPV += item.pv * qty; prodQty += qty; }
     });
-    const promo = PROMOS.find(p => totalPV >= p.threshold);
+    const promo = (currentAppMode === 'anniversary') ? PROMOS.find(p => totalPV >= p.threshold) : null;
     const giftQty = calculateGiftQty(totalPV);
     const bInfo = getBonusInfo(rank, totalPV);
     const now = new Date();
     const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const versionLabel = currentAppMode === 'anniversary' ? '2026 17週年慶特惠版' : '平日版';
+    const currencyLabel = currentCurrency === 'MYR' ? '國際版 (馬幣RM）' : '台幣 TWD';
 
     let rowsHTML = '';
     if (activeItems.length === 0) {
@@ -1393,14 +1504,16 @@ function buildSnapshotHTML() {
                 </td>
             </tr>`;
         });
-        PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] || 0) >= 8).forEach(p => {
-            const gq = Math.floor(quantities[p.id] / 8);
-            rowsHTML += `
-            <tr style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;">
-                <td style="padding:10px 18px;color:#059669;font-weight:900;font-size:15px;" colspan="2">🎁 贈：${p.name} (買8送1)</td>
-                <td style="padding:10px 18px;text-align:right;color:#059669;font-weight:900;font-size:15px;">×${gq} FREE</td>
-            </tr>`;
-        });
+        if (currentAppMode === 'anniversary') {
+            PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] || 0) >= 8).forEach(p => {
+                const gq = Math.floor(quantities[p.id] / 8);
+                rowsHTML += `
+                <tr style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;">
+                    <td style="padding:10px 18px;color:#059669;font-weight:900;font-size:15px;" colspan="2">🎁 贈：${p.name} (買8送1)</td>
+                    <td style="padding:10px 18px;text-align:right;color:#059669;font-weight:900;font-size:15px;">×${gq} FREE</td>
+                </tr>`;
+            });
+        }
     }
 
     const promoHTML = promo ? `
@@ -1433,7 +1546,7 @@ function buildSnapshotHTML() {
         <div style="background:linear-gradient(135deg,#1e1b2e 0%,#3b1f6e 60%,#7c3aed 100%);padding:16px 20px 14px;text-align:center;">
             <div style="font-size:22px;font-weight:900;color:white;letter-spacing:0.04em;line-height:1.2;">訂單明細</div>
             <div style="font-size:12px;color:rgba(255,255,255,0.7);font-weight:700;margin-top:4px;letter-spacing:0.04em;">
-                2026 17週年慶特惠版 (${currentCurrency === 'MYR' ? '馬幣 MYR' : '台幣 TWD'})
+                ${versionLabel} (${currencyLabel})
             </div>
             <div style="display:flex;align-items:center;justify-content:${orderer ? 'space-between' : 'center'};margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);font-size:12px;color:rgba(255,255,255,0.9);">
                 ${orderer ? `<div style="font-weight:900;">👤 訂購人：${orderer}</div>` : ''}
@@ -1636,11 +1749,15 @@ function generateFullOrderText() {
     let totalPrice = 0, totalPV = 0, prodQty = 0;
     let lines = [];
 
+    const versionTitle = currentAppMode === 'anniversary' ? '2026 17週年慶特惠版' : '平日版';
+    const currencyName = currentCurrency === 'MYR' ? '國際版 (馬幣RM）' : '台幣';
+    const currencyFullName = currentCurrency === 'MYR' ? '國際版 (馬幣RM）' : '新台幣 (TWD)';
+
     lines.push('═════════════');
-    lines.push(`◆訂單明細（2026 17週年慶特惠版 - ${currentCurrency === 'MYR' ? '馬幣' : '台幣'}）`);
+    lines.push(`◆訂單明細（${versionTitle} - ${currencyName}）`);
     lines.push('═════════════');
     if (orderer) lines.push(`  訂購人：${orderer}`);
-    lines.push(`  幣別：${currentCurrency === 'MYR' ? '馬幣 (MYR)' : '新台幣 (TWD)'}`);
+    lines.push(`  幣別：${currencyFullName}`);
     
     const now = new Date();
     currentOrderTime = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -1662,22 +1779,24 @@ function generateFullOrderText() {
         }
     });
 
-    // 贈品邏輯
-    const healthGifts = PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] || 0) >= 8);
-    if (healthGifts.length > 0) {
-        lines.push('─────────────');
-        lines.push('🎁 買8送1贈品：');
-        healthGifts.forEach(p => {
-            const gq = Math.floor(quantities[p.id] / 8);
-            lines.push(`  ${p.name} ×${gq}`);
-        });
-    }
+    // 贈品邏輯（僅週年慶版）
+    if (currentAppMode === 'anniversary') {
+        const healthGifts = PRODUCT_DATA.filter(p => p.isHealth && (quantities[p.id] || 0) >= 8);
+        if (healthGifts.length > 0) {
+            lines.push('─────────────');
+            lines.push('🎁 買8送1贈品：');
+            healthGifts.forEach(p => {
+                const gq = Math.floor(quantities[p.id] / 8);
+                lines.push(`  ${p.name} ×${gq}`);
+            });
+        }
 
-    const promo = PROMOS.find(p => totalPV >= p.threshold);
-    if (promo) {
-        lines.push('─────────────');
-        lines.push('🎁 2026 17週年慶活動達標贈品：');
-        lines.push(`  ${promo.desc}`);
+        const promo = PROMOS.find(p => totalPV >= p.threshold);
+        if (promo) {
+            lines.push('─────────────');
+            lines.push('🎁 2026 17週年慶活動達標贈品：');
+            lines.push(`  ${promo.desc}`);
+        }
     }
 
     lines.push('═════════════');
@@ -1729,7 +1848,7 @@ async function uploadToSheet(fullText) {
 
     // 依據非零商品項目與數量、訂購人、位階、幣別建立唯一訂單特徵值
     const activeEntries = Object.entries(quantities).filter(([_, v]) => v > 0).sort((a, b) => a[0].localeCompare(b[0]));
-    const dataKey = JSON.stringify(activeEntries) + '|' + orderer + '|' + rank + '|' + currentCurrency;
+    const dataKey = JSON.stringify(activeEntries) + '|' + orderer + '|' + rank + '|' + currentCurrency + '|' + currentAppMode;
 
     // 只要訂單內容沒有改變，不管間隔幾秒，一律防止重複上傳計次
     if (dataKey === window.lastDataKey) {
@@ -1752,7 +1871,7 @@ async function uploadToSheet(fullText) {
         type: 'order',
         action: 'order',
         timeStamp: timeStr,
-        currency: currentCurrency === 'MYR' ? '馬幣 (MYR)' : '新台幣 (TWD)',
+        currency: currentCurrency === 'MYR' ? '國際版 (馬幣RM）' : '新台幣 (TWD)',
         currentCurrency: currentCurrency,
         orderer: orderer || '',
         rank: rank,
