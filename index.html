@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title id="pageTitle">天麗✪計算機（週年慶版）</title>
+    <title id="pageTitle">天麗✪計算機（年終特惠版）</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -575,7 +575,7 @@
                         <label style="font-size:clamp(11px,3vw,13px);font-weight:800;color:var(--primary);white-space:nowrap;flex-shrink:0;">活動版本：</label>
                         <div class="currency-toggle" style="flex:1; min-width:0;">
                             <button type="button" id="btnModeRegular" onclick="setAppMode('regular')" class="mode-btn">☀️ 平日版</button>
-                            <button type="button" id="btnModeAnniversary" onclick="setAppMode('anniversary')" class="mode-btn active">🎉 週年慶版</button>
+                            <button type="button" id="btnModeAnniversary" onclick="setAppMode('anniversary')" class="mode-btn active">🎉 年終特惠版</button>
                         </div>
                     </div>
 
@@ -650,7 +650,7 @@
                 </div>
             </div>
 
-            <!-- 新品保健食品專案：買 6 送 2（僅週年慶版顯示） -->
+            <!-- 新品保健食品專案：買 6 送 2（僅年終特惠版顯示） -->
             <div id="healthPromoNote" class="mt-2">
                 <p style="color:var(--green);font-size:clamp(11px,3vw,13px);font-weight:800;" class="flex items-center gap-1">
                     <i data-lucide="leaf" class="w-4 h-4 shrink-0"></i> 新品保健食品：買 6 送 2 (限同品項)｜天植萃精華飲、速活氧(預購)、青春元素-C初妍口含錠
@@ -926,7 +926,7 @@ function formatMoney(amount) {
     return `$${amount.toLocaleString()}`;
 }
 
-let currentAppMode = 'anniversary'; // 預設為「週年慶版」
+let currentAppMode = 'anniversary'; // 預設為「年終特惠版」
 
 window.setCurrency = function(curr) {
     if (currentCurrency === curr) return;
@@ -972,9 +972,9 @@ window.setAppMode = function(mode) {
         if (annivArea) annivArea.style.display = 'block';
         if (regularArea) regularArea.style.display = 'none';
         if (healthNote) healthNote.style.display = 'block';
-        document.title = '天麗✪計算機（週年慶版）';
-        if (pageTitle) pageTitle.innerText = '天麗✪計算機（週年慶版）';
-        showMessage('已切換模式為：🎉 週年慶版');
+        document.title = '天麗✪計算機（年終特惠版）';
+        if (pageTitle) pageTitle.innerText = '天麗✪計算機（年終特惠版）';
+        showMessage('已切換模式為：🎉 年終特惠版');
     }
 
     if (window.lucide) window.lucide.createIcons();
@@ -1089,7 +1089,7 @@ function getBonusInfo(rank, pv) {
 
 function calculateGiftQty(pv) {
     let giftCount = 0;
-    // 平日版無任何活動贈品與新品買6送2，僅週年慶版計算
+    // 平日版無任何活動贈品與新品買6送2，僅年終特惠版計算
     if (currentAppMode === 'anniversary') {
         const activePromo = PROMOS.find(p => pv >= p.threshold);
         if (activePromo) {
@@ -1783,7 +1783,7 @@ function generateFullOrderText() {
         }
     });
 
-    // 贈品邏輯（僅週年慶版）
+    // 贈品邏輯（僅年終特惠版）
     if (currentAppMode === 'anniversary') {
         const newHealthGifts = PRODUCT_DATA.filter(p => p.buy6Get2 && (quantities[p.id] || 0) >= 6);
         if (newHealthGifts.length > 0) {
