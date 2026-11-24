@@ -1031,6 +1031,10 @@ const PROMOS = [
     { threshold:  32000, desc: "1號 (雙效潔顏露) + 9號 (保濕修護霜) + 嫩白C粉 (價值 7,875元)", value: 7875 }
 ];
 
+function formatPromoDescHTML(desc) {
+    return desc.replace(/(\(價值 [^)]+\))/, '<span style="color:#6b7280;">$1</span>');
+}
+
 function getOrderer() { return (document.getElementById('ordererInput')?.value || '').trim(); }
 function updateOrderer() { updateTotals(); }
 
@@ -1307,7 +1311,7 @@ function updateTotals() {
 
     const activePromo = (currentAppMode === 'anniversary') ? PROMOS.find(p => pv >= p.threshold) : null;
     const noticeEl = document.getElementById('promoNotice');
-    noticeEl.innerText = activePromo ? `🎁 已達標：${activePromo.desc}` : '';
+    noticeEl.innerHTML = activePromo ? `🎁 已達標：${formatPromoDescHTML(activePromo.desc)}` : '';
 
     const rank = getRankInfo();
     const bInfo = getBonusInfo(rank, pv);
@@ -1379,7 +1383,7 @@ function toggleSummary(show) {
             const promoSec = document.getElementById('modalPromoSection');
             if (promo) {
                 promoSec.classList.remove('hidden');
-                document.getElementById('modalPromoDesc').innerText = promo.desc;
+                document.getElementById('modalPromoDesc').innerHTML = formatPromoDescHTML(promo.desc);
             } else {
                 promoSec.classList.add('hidden');
             }
@@ -1519,7 +1523,7 @@ function buildSnapshotHTML() {
     const promoHTML = promo ? `
     <div style="background:#fff1f2;border-top:2px solid #fecdd3;padding:16px 20px;">
         <div style="color:#be123c;font-weight:900;font-size:15px;margin-bottom:5px;">🎁 2026 年終特惠活動達標贈品</div>
-        <div style="color:#e11d48;font-weight:700;font-size:16px;">${promo.desc}</div>
+        <div style="color:#e11d48;font-weight:700;font-size:16px;">${formatPromoDescHTML(promo.desc)}</div>
     </div>` : '';
 
     const promotionBadgeHTML = bInfo.promoNoticeText ? `
